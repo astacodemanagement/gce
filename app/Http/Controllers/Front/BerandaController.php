@@ -157,6 +157,7 @@ class BerandaController extends Controller
             'no_telp' => $request->no_telp,
             'alamat' => $request->alamat,
             'kode_referal' => $request->kode_referal,
+            'jenis_konsumen' => 'FLP',
         ]);
 
 

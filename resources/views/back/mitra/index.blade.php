@@ -469,7 +469,6 @@
         });
     });
 </script>
-
 {{-- PERINTAH UPDATE DATA --}}
 
 

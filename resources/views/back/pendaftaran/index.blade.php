@@ -10,9 +10,10 @@
             <thead>
                 <tr>
                     <th width="5%">No</th>
-                    <th width="5%">Kategori Konsumen</th>
+                    <th width="15%">Kategori Konsumen</th>
                     <th>Nama Konsumen</th>
                     <th>Email</th>
+                    <th>No Telp</th>
                     <th width="15%">Aksi</th>
                 </tr>
             </thead>
@@ -21,9 +22,19 @@
                 @foreach ($konsumen as $p)
                 <tr>
                     <td>{{ $i }}</td>
-                    <td>{{ $p->kategori_konsumen }}</td>
-                    <td>{{ $p->user->name }}</td> <!-- Mengambil nama dari relasi user -->
-                    <td>{{ $p->user->email }}</td> <!-- Mengambil email dari relasi user -->
+                    <td>
+                        @if (strtoupper($p->kategori_konsumen) == 'PERSONAL')
+                        <span class="badge bg-success">{{ strtoupper($p->kategori_konsumen) }}</span>
+                        @elseif (strtoupper($p->kategori_konsumen) == 'CORPORATE')
+                        <span class="badge bg-primary">{{ strtoupper($p->kategori_konsumen) }}</span>
+                        @else
+                        <span class="badge bg-secondary">{{ strtoupper($p->kategori_konsumen) }}</span>
+                        @endif
+                    </td>
+
+                    <td>{{ $p->user->name }}</td>
+                    <td>{{ $p->user->email }}</td>
+                    <td>{{ $p->no_telp }}</td>
                     <td>
                         <a href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}">
                             <i class="fas fa-edit"></i> Edit
@@ -43,131 +54,12 @@
 </div>
 <!-- /.card -->
 
-<div class="modal fade" id="modal-tambah">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Form {{ $subtitle }}</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Main content -->
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title"></h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <!-- form start -->
-                    <form id="form-tambah" action="{{ route('konsumen.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf <!-- Tambahkan token CSRF -->
-                        <div class="card-body">
-
-                            <div class="col-lg-12">
-                                <div class="mb-4">
-                                    <label for="nama_konsumen" class="form-label fw-semibold">Nama Konsumen</label>
-                                    <span class="text-danger">*</span> <!-- Menambahkan span untuk keterangan -->
-                                    <input type="text" class="form-control" id="nama_konsumen" name="nama_konsumen"
-                                        placeholder="Ex : Nama" required>
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="mb-4">
-                                    <label for="link" class="form-label fw-semibold">Link</label>
-                                    <input type="text" class="form-control" id="link" name="link"
-                                        placeholder="Ex : https://...">
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="mb-4">
-                                    <label for="urutan" class="form-label fw-semibold">Urutan</label>
-
-                                    <input type="number" class="form-control" id="urutan" name="urutan"
-                                        placeholder="Ex : 1">
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="mb-4">
-                                    <label for="deskripsi" class="form-label fw-semibold">Deskripsi</label>
-                                    <textarea class="form-control" name="deskripsi" id="deskripsi" cols="30" rows="2"></textarea>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="mb-4">
-                                    <label for="gambar" class="form-label fw-semibold">Gambar</label>
-                                    <span class="text-danger">*</span>
-                                    <input type="file" class="form-control" id="gambar"
-                                        name="gambar" onchange="previewImage()">
-
-                                    <canvas id="preview_canvas"
-                                        style="display: none; max-width: 100%; margin-top: 10px;"></canvas>
-                                    <img id="preview_image" src="#" alt="Preview Logo"
-                                        style="display: none; max-width: 100%; margin-top: 10px;">
-                                    <script>
-                                        function previewImage() {
-                                            var previewCanvas = document.getElementById('preview_canvas');
-                                            var previewImage = document.getElementById('preview_image');
-                                            var fileInput = document.getElementById('gambar');
-                                            var file = fileInput.files[0];
-                                            var reader = new FileReader();
-
-                                            reader.onload = function(e) {
-                                                var img = new Image();
-                                                img.src = e.target.result;
-
-                                                img.onload = function() {
-                                                    var canvasContext = previewCanvas.getContext('2d');
-                                                    var maxWidth = 150; // Max width untuk pratinja gambar
-
-                                                    var scaleFactor = maxWidth / img.width;
-                                                    var newHeight = img.height * scaleFactor;
-
-                                                    previewCanvas.width = maxWidth;
-                                                    previewCanvas.height = newHeight;
-
-                                                    canvasContext.drawImage(img, 0, 0, maxWidth, newHeight);
-
-                                                    // Menampilkan pratinja logo setelah diperkecil
-                                                    previewCanvas.style.display = 'block';
-                                                    previewImage.style.display = 'none';
-                                                };
-                                            };
-
-                                            if (file) {
-                                                reader.readAsDataURL(file); // Membaca file yang dipilih sebagai URL data
-                                            } else {
-                                                previewImage.src = '';
-                                                previewCanvas.style.display = 'none'; // Menyembunyikan pratinja gambar jika tidak ada file yang dipilih
-                                            }
-                                        }
-                                    </script>
-                                </div>
-                            </div>
-
-                        </div>
-                        <!-- /.card-body -->
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-primary" id="btn-save-tambah"><i class="fas fa-save"></i> Simpan</button>
-                            <button type="button" class="btn btn-danger float-right" data-dismiss="modal"><span aria-hidden="true">&times;</span> Close</button>
-                        </div>
-                    </form>
-                </div>
-                <!-- /.card -->
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
 
 <div class="modal fade" id="modal-edit">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl"> <!-- Tambahkan class modal-lg -->
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Form Edit {{ $subtitle }}</h4>
+                <h4 class="modal-title">Form Detail {{ $subtitle }}</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -182,84 +74,106 @@
                     <!-- form start -->
                     <form id="form-edit" method="POST" enctype="multipart/form-data">
                         @method('PUT')
-                        @csrf <!-- Tambahkan token CSRF -->
+                        @csrf
                         <input class="id" type="hidden" id="" name="id" value="">
                         <div class="card-body">
-                            <!-- Tambahkan field input yang sesuai di sini -->
-                            <div class="form-group">
-                                <label for="nama_konsumen_edit">Nama Konsumen</label>
-                                <input type="text" class="form-control" id="nama_konsumen_edit" name="nama_konsumen" required>
+                            <div class="row">
+                                <!-- Kolom untuk Nama Konsumen, Jenis Kelamin, dan Tanggal Lahir -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="name_edit">Nama Konsumen</label>
+                                        <input type="text" class="form-control" id="name_edit" name="name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="jenis_kelamin_edit">Jenis Kelamin</label>
+                                        <input type="text" class="form-control" id="jenis_kelamin_edit" name="jenis_kelamin" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="tanggal_lahir_edit">Tanggal Lahir</label>
+                                        <input type="text" class="form-control" id="tanggal_lahir_edit" name="tanggal_lahir" required>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="link_edit">Link</label>
-                                <input type="text" class="form-control" id="link_edit" name="link" required>
+
+                            <div class="row">
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="kategori_konsumen_edit">Kategori Konsumen</label>
+                                        <input type="text" class="form-control" id="kategori_konsumen_edit" name="kategori_konsumen" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="no_telp_edit">No Telp</label>
+                                        <input type="text" class="form-control" id="no_telp_edit" name="no_telp" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="email_edit">Email</label>
+                                        <input type="text" class="form-control" id="email_edit" name="email" required>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="urutan_edit">Urutan</label>
-                                <input type="text" class="form-control" id="urutan_edit" name="urutan" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="deskripsi_edit">Deskripsi</label>
-                                <textarea class="form-control" id="deskripsi_edit" name="deskripsi" required></textarea>
-                            </div>
-                            <div class="col-12">
-                                <div class="mb-4">
-                                    <label for="gambar" class="form-label fw-semibold">Gambar</label>
-                                    <span class="text-danger">*</span>
-                                    <input type="file" class="form-control" id="gambar_edit"
-                                        name="gambar" onchange="previewImage2()">
 
-                                    <canvas id="preview_canvas2"
-                                        style="display: none; max-width: 100%; margin-top: 10px;"></canvas>
-                                    <img id="preview_image2" src="#" alt="Preview Gambar"
-                                        style="display: none; max-width: 100%; margin-top: 10px;">
-                                    <script>
-                                        function previewImage2() {
-                                            var previewCanvas = document.getElementById('preview_canvas2');
-                                            var previewImage2 = document.getElementById('preview_image2');
-                                            var fileInput = document.getElementById('gambar_edit');
-                                            var file = fileInput.files[0];
-                                            var reader = new FileReader();
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="kode_referal_edit">Kode Referal</label>
+                                        <input type="text" class="form-control" id="kode_referal_edit" name="kode_referal" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="alamat_edit">Alamat</label>
+                                        <textarea class="form-control" id="alamat_edit" name="alamat" required></textarea>
+                                    </div>
+                                </div>
 
-                                            reader.onload = function(e) {
-                                                var img = new Image();
-                                                img.src = e.target.result;
+                                <!-- Status Verifikasi dengan Select (Combo Box) -->
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="status_edit">Status Verifikasi</label>
+                                        <select class="form-control" id="status_edit" name="status" required>
+                                            <option value="Aktif">Aktif - Approve</option>
+                                            <option value="Non Aktif">Non Aktif - Reject</option>
+                                        </select>
+                                    </div>
+                                </div>
 
-                                                img.onload = function() {
-                                                    var canvasContext = previewCanvas.getContext('2d');
-                                                    var maxWidth = 150; // Max width untuk pratinja gambar
-
-                                                    var scaleFactor = maxWidth / img.width;
-                                                    var newHeight = img.height * scaleFactor;
-
-                                                    previewCanvas.width = maxWidth;
-                                                    previewCanvas.height = newHeight;
-
-                                                    canvasContext.drawImage(img, 0, 0, maxWidth, newHeight);
-
-                                                    // Menampilkan pratinja logo setelah diperkecil
-                                                    previewCanvas.style.display = 'block';
-                                                    previewImage2.style.display = 'none';
-                                                };
-                                            };
-
-                                            if (file) {
-                                                reader.readAsDataURL(file); // Membaca file yang dipilih sebagai URL data
-                                            } else {
-                                                previewImage2.src = '';
-                                                previewCanvas.style.display = 'none'; // Menyembunyikan pratinja gambar jika tidak ada file yang dipilih
-                                            }
-                                        }
-                                    </script>
+                                <!-- Catatan Alasan (Hidden by default) -->
+                                <div class="col-md-12" id="alasan_group" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="alasan_edit">Catatan Alasan</label>
+                                        <textarea class="form-control" id="alasan_edit" name="alasan"></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- /.card-body -->
+
+                        <!-- Footer -->
                         <div class="card-footer">
                             <button type="button" class="btn btn-primary" id="btn-save-edit"><i class="fas fa-check"></i> Update</button>
                             <button type="button" class="btn btn-danger" data-dismiss="modal"><span aria-hidden="true">&times;</span> Close</button>
                         </div>
                     </form>
+
+                    <script>
+                        document.getElementById('status_edit').addEventListener('change', function() {
+                            var alasanGroup = document.getElementById('alasan_group');
+                            if (this.value === 'Non Aktif') {
+                                alasanGroup.style.display = 'block'; // Menampilkan catatan alasan jika Reject dipilih
+                            } else {
+                                alasanGroup.style.display = 'none'; // Menyembunyikan catatan alasan jika bukan Reject
+                            }
+                        });
+                    </script>
+
                 </div>
                 <!-- /.card -->
             </div>
@@ -268,13 +182,132 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+
 <!-- /.modal -->
 @endsection
 
 @push('script')
 {{-- SKRIP TAMBAHAN --}}
 
+{{-- PERINTAH EDIT DATA --}}
+<script>
+    $(document).ready(function() {
 
+        $('#example1').on('click', '.btn-edit', function(e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+
+            $.ajax({
+                method: 'GET',
+                url: '{{ route("data_pendaftaran.edit", ":id") }}'.replace(':id', id),
+                success: function(data) {
+                    console.log(data); // Cek data yang diterima dari server
+                    // Mengisi data pada form modal
+                    $('.id').val(data.id);
+                    $('#name_edit').val(data.user.name);
+                    $('#jenis_kelamin_edit').val(data.jenis_kelamin);
+                    $('#tanggal_lahir_edit').val(data.tanggal_lahir);
+                    $('#kategori_konsumen_edit').val(data.kategori_konsumen);
+                    $('#no_telp_edit').val(data.no_telp);
+                    $('#alamat_edit').val(data.alamat);
+                    $('#kode_referal_edit').val(data.kode_referal);
+                    $('#email_edit').val(data.user.email);
+                    $('#modal-edit').modal('show');
+                },
+
+                error: function(xhr) {
+                    // Tangani kesalahan jika ada
+                    alert('Error: ' + xhr.statusText);
+                }
+            });
+
+        });
+
+
+    });
+</script>
+{{-- PERINTAH EDIT DATA --}}
+
+
+{{-- PERINTAH UPDATE DATA --}}
+<script>
+    $(document).ready(function() {
+        $('#btn-save-edit').click(function(e) {
+            e.preventDefault();
+
+            const tombolUpdate = $('#btn-save-edit');
+            var id = $('.id').val();
+            var formData = new FormData($('#form-edit')[0]);
+
+            // Ubah teks tombol menjadi "Updating..." dan disable tombolnya
+            tombolUpdate.text('Updating...');
+            tombolUpdate.prop('disabled', true);
+
+            $.ajax({
+                type: 'POST', // Gunakan POST karena kita override dengan PUT
+                url: '/data_pendaftaran/' + id,
+                data: formData,
+                // headers: {
+                //     'X-HTTP-Method-Override': 'PUT'
+                // },
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $('form').find('.error-message').remove();
+                },
+                success: function(response) {
+                    $('#modal-edit').modal('hide');
+                    Swal.fire({
+                        title: 'Sukses!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed || result.isDismissed) {
+                            location.reload();
+                        }
+                    });
+                },
+                complete: function() {
+                    // Kembalikan teks tombol ke "Update" dan enable tombolnya
+                    tombolUpdate.text('Update');
+                    tombolUpdate.prop('disabled', false);
+                },
+                error: function(xhr) {
+                    // Jika bukan error 422 (validasi), tetap sembunyikan modal
+                    if (xhr.status !== 422) {
+                        $('#modal-edit').modal('hide');
+                    }
+
+                    var errorMessages = xhr.responseJSON.errors;
+                    var errorMessage = '';
+
+                    if (errorMessages) {
+                        // Jika ada pesan error validasi
+                        $.each(errorMessages, function(key, value) {
+                            errorMessage += value + '<br>';
+                        });
+                    } else {
+                        // Jika error di luar validasi, tampilkan pesan error dari server
+                        errorMessage = xhr.responseJSON.message || 'Terjadi kesalahan';
+                    }
+
+                    Swal.fire({
+                        title: 'Error!',
+                        html: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+
+                    // Kembalikan tombol ke keadaan semula jika terjadi error
+                    tombolUpdate.text('Update');
+                    tombolUpdate.prop('disabled', false);
+                }
+            });
+        });
+    });
+</script>
+{{-- PERINTAH UPDATE DATA --}}
 
 @endpush
 
