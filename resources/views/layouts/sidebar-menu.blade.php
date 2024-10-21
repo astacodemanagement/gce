@@ -440,7 +440,7 @@
         </a>
         <ul class="nav nav-treeview">
             <li class="nav-item">
-                <a href="{{ route('kategori_berita.index') }}" class="nav-link {{ Route::is('kategori_berita.*') ? 'active' : '' }}">
+                <a href="{{ route('data_pendaftaran.index') }}" class="nav-link {{ Route::is('data_pendaftaran.*') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon" aria-hidden="true"></i>
                     <p>
                         Data Masuk
