@@ -52,8 +52,9 @@
                 <div class="request-services-one__form-box">
                     <div class="request-services-one__form-tab tabs-box">
                         <ul class="tab-buttons clearfix list-unstyled">
-                            <li data-tab="#quote" class="tab-btn active-btn"><span>Info Umum</span></li>
-                            <li data-tab="#track" class="tab-btn"><span>Tracking</span></li>
+                            <li data-tab="#quote" class="tab-btn active-btn"><span>Profil</span></li>
+                            <li data-tab="#track" class="tab-btn"><span>Order Saya</span></li>
+                            <li data-tab="#track" class="tab-btn"><span>Pembayaran</span></li>
                         </ul>
 
                         <div class="tabs-content">
