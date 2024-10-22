@@ -32,7 +32,7 @@
       </thead>
       <tbody>
         <?php $i = 1; ?>
-        @foreach ($profil as $p)
+        @foreach ($prf as $p)
         <tr>
           <td>{{ $i }}</td>
           <td>{{ $p->nama_profil}}</td>

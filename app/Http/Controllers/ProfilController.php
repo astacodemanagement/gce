@@ -16,8 +16,8 @@ class ProfilController extends Controller
      */
     public function index()
     {
-        $profil = Profil::all();
-        return view('profil.index', compact('profil'));
+        $prf = Profil::all();
+        return view('profil.index', compact('prf'));
     }
 
     /**
