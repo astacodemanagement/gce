@@ -2,12 +2,14 @@
 @section('title', $title)
 @section('subtitle', $subtitle)
 
+
 @push('css')
+
 @endpush
 
 
 @section('content')
-
+{!! RecaptchaV3::initJs() !!}
 <!--Start Page Header-->
 <section class="page-header">
     <div class="page-header__bg" style="background-image: url({{ asset('template/front') }}/hero.png)">
@@ -253,6 +255,21 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="form-group{{ $errors->has('g-recaptcha-response') ? ' has-error' : '' }}">
+                                    <div class="col-md-6">
+                                        {!! RecaptchaV3::field('register') !!}
+                                        @if ($errors->has('g-recaptcha-response'))
+                                        <span class="help-block">
+                                            <strong>{{ $errors->first('g-recaptcha-response') }}</strong>
+                                        </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+
+
                             <div class="row">
                                 <div class="col-xl-6 col-lg-6 col-md-6">
                                     <div class="request-services-one__form-btn">

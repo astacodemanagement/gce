@@ -428,7 +428,7 @@
         </ul>
     </li>
 
-    
+
     <li class="nav-item">
 
         <a href="#" class="nav-link">
@@ -437,6 +437,9 @@
                 Pendaftaran
                 <i class="right fas fa-angle-left"></i>
             </p>
+            @if ($nonActiveUserCount > 0)
+            <span class="badge bg-danger">{{ $nonActiveUserCount }}</span>
+            @endif
         </a>
         <ul class="nav nav-treeview">
             <li class="nav-item">
@@ -445,6 +448,9 @@
                     <p>
                         Data Masuk
                     </p>
+                    @if ($nonActiveUserCount > 0)
+                    <span class="badge bg-danger">{{ $nonActiveUserCount }}</span>
+                    @endif
                 </a>
             </li>
             <li class="nav-item">

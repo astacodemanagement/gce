@@ -28,6 +28,11 @@
     <link rel="stylesheet" href="{{ asset('template/front') }}/assets/css/style.css">
     <link rel="stylesheet" href="{{ asset('template/front') }}/assets/css/responsive.css">
     <style>
+        .grecaptcha-badge {
+            visibility: hidden !important;
+        }
+    </style>
+    <style>
         body {
             background-color: black;
             color: white;

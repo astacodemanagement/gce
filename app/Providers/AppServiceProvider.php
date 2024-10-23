@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Profil;
+use App\Models\User;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,5 +31,9 @@ class AppServiceProvider extends ServiceProvider
         //
         $profil = Profil::where('id', 1)->first();
         View::share('profil', $profil);
+
+         // Share the count of non-active users with all views
+         $nonActiveUserCount = User::where('status', 'Non Aktif')->count();
+         View::share('nonActiveUserCount', $nonActiveUserCount);
     }
 }

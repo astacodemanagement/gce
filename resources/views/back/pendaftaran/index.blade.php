@@ -99,8 +99,8 @@
                                 </div>
                             </div>
 
-                            <div class="row">
 
+                            <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="kategori_konsumen_edit">Kategori Konsumen</label>
@@ -122,6 +122,14 @@
                             </div>
 
                             <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="nama_perusahaan_edit">Nama Perusahaan</label>
+                                        <input type="text" class="form-control" id="nama_perusahaan_edit" name="nama_perusahaan" required>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="kode_referal_edit">Kode Referal</label>
@@ -174,6 +182,8 @@
                         });
                     </script>
 
+
+
                 </div>
                 <!-- /.card -->
             </div>
@@ -205,6 +215,7 @@
                     // Mengisi data pada form modal
                     $('.id').val(data.id);
                     $('#name_edit').val(data.user.name);
+                    $('#nama_perusahaan_edit').val(data.nama_perusahaan);
                     $('#jenis_kelamin_edit').val(data.jenis_kelamin);
                     $('#tanggal_lahir_edit').val(data.tanggal_lahir);
                     $('#kategori_konsumen_edit').val(data.kategori_konsumen);

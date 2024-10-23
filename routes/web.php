@@ -50,7 +50,9 @@ Route::resource('/', BerandaController::class);
 Route::get('/halaman_berita', [BerandaController::class, 'halaman_berita']);
 Route::get('/login_pengguna', [BerandaController::class, 'login_pengguna']);
 Route::get('/pendaftaran', [BerandaController::class, 'pendaftaran']);
-Route::post('/pendaftaran/submit_pendaftaran', [BerandaController::class, 'submit_pendaftaran'])->name('pendaftaran.submit_pendaftaran');
+Route::post('/pendaftaran/submit_pendaftaran', [PendaftaranController::class, 'submit_pendaftaran'])
+    ->name('pendaftaran.submit_pendaftaran')
+    ->middleware('throttle:1,1');
 Route::get('/dokumentasi_umum', [BerandaController::class, 'dokumentasi_umum']);
 Route::resource('/area', KlienAreaController::class);
 
@@ -133,7 +135,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('/kategori_berita', KategoriBeritaController::class);
         Route::resource('/berita', BeritaController::class);
         Route::resource('/data_pendaftaran', PendaftaranController::class);
-      
     });
 
     Route::middleware('role:superadmin|gudang')->group(function () {

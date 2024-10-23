@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 
 use App\Models\LogHistori;
 use App\Models\Konsumen;
+use App\Models\Profil;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class PendaftaranController extends Controller
 {
@@ -25,6 +28,69 @@ class PendaftaranController extends Controller
         return view('back.pendaftaran.index', compact('konsumen', 'title', 'subtitle'));
     }
 
+    public function submit_pendaftaran(Request $request)
+    {
+         
+        $request->validate([
+            'nama_lengkap' => 'required|string|max:255',
+            'kategori_konsumen' => 'required|string',
+            'nama_perusahaan' => 'nullable|string|max:255',
+            'jenis_kelamin' => 'required|string|in:Pria,Wanita',
+            'email' => 'required|email|unique:users,email|max:255',
+            'password' => 'required|min:8|confirmed',
+            'no_telp' => 'required|string|max:15|unique:konsumen,no_telp',
+            'alamat' => 'required|string|max:500',
+            'tanggal_lahir' => 'required|date',
+            'kode_referal' => 'nullable|string|max:10',
+            'g-recaptcha-response' => 'required|recaptchav3:register,0.5'
+        ]);
+
+       
+        $sanitizedInput = [
+            'nama_lengkap' => htmlspecialchars(strip_tags($request->nama_lengkap)),
+            'kategori_konsumen' => htmlspecialchars(strip_tags($request->kategori_konsumen)),
+            'nama_perusahaan' => htmlspecialchars(strip_tags($request->nama_perusahaan)),
+            'jenis_kelamin' => htmlspecialchars(strip_tags($request->jenis_kelamin)),
+            'email' => htmlspecialchars(strip_tags($request->email)),
+            'no_telp' => htmlspecialchars(strip_tags($request->no_telp)),
+            'alamat' => htmlspecialchars(strip_tags($request->alamat)),
+            'tanggal_lahir' => $request->tanggal_lahir, // Tanggal tidak perlu disanitasi
+            'kode_referal' => htmlspecialchars(strip_tags($request->kode_referal)),
+        ];
+
+        
+        $user = User::create([
+            'email' => $sanitizedInput['email'],
+            'status' => 'Non Aktif',
+            'name' => $sanitizedInput['nama_lengkap'],
+            'password' => Hash::make($request->password),
+        ]);
+
+        Konsumen::create([
+            'user_id' => $user->id,
+            'kategori_konsumen' => $sanitizedInput['kategori_konsumen'],
+            'nama_perusahaan' => $sanitizedInput['kategori_konsumen'] === 'corporate' ? $sanitizedInput['nama_perusahaan'] : null,
+            'jenis_kelamin' => $sanitizedInput['jenis_kelamin'],
+            'tanggal_lahir' => $sanitizedInput['tanggal_lahir'],
+            'no_telp' => $sanitizedInput['no_telp'],
+            'alamat' => $sanitizedInput['alamat'],
+            'kode_referal' => $sanitizedInput['kode_referal'],
+            'jenis_konsumen' => 'FLP',
+        ]);
+
+        // Assign role ke pengguna
+        $role = Role::find(6);
+        if ($role) {
+            $user->assignRole($role->name);
+        } else {
+            return response(['success' => false, 'message' => 'Role tidak ditemukan'], 404);
+        }
+
+        $profil = Profil::first();
+        $no_wa = $profil ? $profil->no_wa : 'Tertera';
+
+        return redirect()->back()->with('success', 'Data Pendaftaran berhasil dikirimkan! Informasi selanjutnya bisa hubungi No : ' . $no_wa);
+    }
 
 
 
@@ -57,33 +123,33 @@ class PendaftaranController extends Controller
                 'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'alasan_reject' => 'nullable|required_if:status,Non Aktif|max:255',
             ]);
-    
+
             // Ambil data konsumen yang akan diupdate berdasarkan ID konsumen
             $konsumen = Konsumen::findOrFail($id);
-    
+
             // Ambil data user yang terkait dengan konsumen (berdasarkan user_id di tabel konsumen)
             $user = User::findOrFail($konsumen->user_id);
-    
+
             // Inisialisasi input dari request untuk tabel konsumen
             $inputKonsumen = $request->except(['name', 'email', 'status']);
-    
+
             // Inisialisasi input dari request untuk tabel users
             $inputUser = $request->only(['name', 'email', 'status']);
-    
+
             // Update data konsumen
             $konsumen->update($inputKonsumen);
-    
+
             // Update data user
             $user->name = $inputUser['name'];
             $user->email = $inputUser['email'];
             $user->status = $inputUser['status'];
             $user->save();
-    
+
             // Simpan log histori untuk operasi Update
             $loggedInUserId = Auth::id();
             $this->simpanLogHistori('Update', 'Konsumen', $konsumen->id, $loggedInUserId, json_encode($konsumen->getOriginal()), json_encode($inputKonsumen));
             $this->simpanLogHistori('Update', 'User', $user->id, $loggedInUserId, json_encode($user->getOriginal()), json_encode($inputUser));
-    
+
             // Beri respons JSON jika berhasil
             return response()->json(['message' => 'Data berhasil diupdate'], 200);
         } catch (\Exception $e) {
@@ -91,7 +157,6 @@ class PendaftaranController extends Controller
             return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
         }
     }
-    
 
 
 
@@ -100,40 +165,8 @@ class PendaftaranController extends Controller
 
 
 
-    public function destroy($id)
-    {
-        $pendaftaran = Konsumen::find($id);
 
-        if (!$pendaftaran) {
-            return response()->json(['message' => 'Data pendaftaran not found'], 404);
-        }
+    public function destroy($id) {}
 
-        $oldgambarFileName = $pendaftaran->gambar; // Nama file saja
-        $oldfilePath = public_path('upload/pendaftaran/' . $oldgambarFileName);
-
-        if ($oldgambarFileName && file_exists($oldfilePath)) {
-            unlink($oldfilePath);
-        }
-
-        $pendaftaran->delete();
-        $loggedInKonsumenId = Auth::id();
-
-        // Simpan log histori untuk operasi Delete dengan pendaftaran_id yang sedang login dan informasi data yang dihapus
-        $this->simpanLogHistori('Delete', 'pendaftaran', $id, $loggedInKonsumenId, json_encode($pendaftaran), null);
-
-        return response()->json(['message' => 'Data Berhasil Dihapus']);
-    }
-
-    private function simpanLogHistori($aksi, $tabelAsal, $idEntitas, $pengguna, $dataLama, $dataBaru)
-    {
-        $log = new LogHistori();
-        $log->tabel_asal = $tabelAsal;
-        $log->id_entitas = $idEntitas;
-        $log->aksi = $aksi;
-        $log->waktu = now(); // Menggunakan waktu saat ini
-        $log->pengguna = $pengguna;
-        $log->data_lama = $dataLama;
-        $log->data_baru = $dataBaru;
-        $log->save();
-    }
+    private function simpanLogHistori($aksi, $tabelAsal, $idEntitas, $pengguna, $dataLama, $dataBaru) {}
 }
