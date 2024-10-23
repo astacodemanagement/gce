@@ -52,7 +52,7 @@ Route::get('/login_pengguna', [BerandaController::class, 'login_pengguna']);
 Route::get('/pendaftaran', [BerandaController::class, 'pendaftaran']);
 Route::post('/pendaftaran/submit_pendaftaran', [PendaftaranController::class, 'submit_pendaftaran'])
     ->name('pendaftaran.submit_pendaftaran')
-    ->middleware('throttle:1,1');
+    ->middleware('throttle:10,1');
 Route::get('/dokumentasi_umum', [BerandaController::class, 'dokumentasi_umum']);
 Route::resource('/area', KlienAreaController::class);
 

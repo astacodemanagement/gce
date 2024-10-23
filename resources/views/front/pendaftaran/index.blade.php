@@ -140,7 +140,7 @@
                                     <div class="col-xl-12 col-lg-12 col-md-12">
                                         <div class="input-box">
                                             <label>No WhatsApp</label>
-                                            <input type="text" placeholder="085-xxx-xxx-xxx" name="no_telp" value="{{ old('no_telp') }}">
+                                            <input type="number" placeholder="085-xxx-xxx-xxx" name="no_telp" value="{{ old('no_telp') }}">
                                             @error('no_telp')
                                             <div class="text-danger">{{ $message }}</div>
                                             @enderror
