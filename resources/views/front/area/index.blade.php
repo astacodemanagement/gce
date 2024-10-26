@@ -52,7 +52,7 @@
                 <div class="request-services-one__form-box">
                     <div class="request-services-one__form-tab tabs-box">
                         <ul class="tab-buttons clearfix list-unstyled">
-                            <li data-tab="#quote" class="tab-btn active-btn"><span>Profil</span></li>
+                            <li data-tab="#profil" class="tab-btn active-btn"><span>Profil</span></li>
                             <li data-tab="#track" class="tab-btn"><span>Order Saya</span></li>
                             <li data-tab="#track" class="tab-btn"><span>Pembayaran</span></li>
                         </ul>
@@ -60,7 +60,7 @@
                         <div class="tabs-content">
 
                             <!--Start Single Tab-->
-                            <div class="tab active-tab" id="quote">
+                            <div class="tab active-tab" id="profil">
                                 <div class="request-services-one__single-tab">
                                     <form id="contact-form2"
                                         class="default-form2 contact-form-validated request-services-one__form"
@@ -68,107 +68,99 @@
 
                                         <div class="request-services-one__form-top">
                                             <div class="title-box">
-                                                <h3>General Information:</h3>
+                                                <h3>Informasi Umum :</h3>
                                             </div>
                                             <div class="row">
-                                                <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <div class="col-xl-6 col-lg-6 col-md-6">
                                                     <div class="input-box">
-                                                        <label>Full Name</label>
-                                                        <input type="text" name="name" value=""
-                                                            placeholder="Ronald Richards" required="">
+                                                        <label>Nama Lengkap</label>
+                                                        <input type="text" name="name" id="name" value=""
+                                                            placeholder="Nama Lengkap">
                                                     </div>
                                                 </div>
 
-                                                <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <div class="col-xl-6 col-lg-6 col-md-6">
                                                     <div class="input-box">
-                                                        <label>Phone Number</label>
-                                                        <input type="text" placeholder="+1256 456 7890"
-                                                            name="phone">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xl-4 col-lg-4 col-md-4">
-                                                    <div class="input-box">
-                                                        <label>Email Address</label>
-                                                        <input type="email" name="email" value=""
-                                                            placeholder="ronald@gmail.com" required="">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-xl-4 col-lg-4 col-md-4">
-                                                    <div class="input-box">
-                                                        <label>Freight Type</label>
+                                                        <label>Jenis Kelamin</label>
                                                         <div class="select-box">
-                                                            <select class="selectmenu wide">
-                                                                <option selected="selected">Air Freight</option>
-                                                                <option>Air Freight</option>
-                                                                <option>Air Freight</option>
-                                                                <option>Air Freight</option>
+                                                            <select class="selectmenu wide" name="jenis_kelamin" id="jenis_kelamin">
+                                                                <option value="Laki-laki" selected="selected">Laki-laki</option>
+                                                                <option value="Perempuan">Perempuan</option>
                                                             </select>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div class="col-xl-4 col-lg-4 col-md-4">
+                                               
+
+                                                <!-- <div class="col-xl-4 col-lg-4 col-md-4">
                                                     <div class="input-box">
-                                                        <label>Departure City</label>
-                                                        <input type="text" placeholder="New York" name="city">
+                                                        <label>Email</label>
+                                                        <input type="email" name="email" id="email" value=""
+                                                            placeholder="Email">
+                                                    </div>
+                                                </div> -->
+                                            </div>
+
+                                            <div class="row">
+                                            <div class="col-xl-6 col-lg-6 col-md-6">
+                                                    <div class="input-box">
+                                                        <label>Tanggal Lahir</label>
+                                                        <input type="date" class="form-control wide" name="tanggal_lahir" id="tanggal_lahir" value="" style="background-color: #3b3232; color:white;">
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-6 col-lg-6 col-md-6">
+                                                    <div class="input-box">
+                                                        <label>No Telp</label>
+                                                        <input type="number" name="no_telp" id="no_telp" value=""
+                                                            placeholder="No Telp">
                                                     </div>
                                                 </div>
 
-                                                <div class="col-xl-4 col-lg-4 col-md-4">
-                                                    <div class="input-box">
-                                                        <label>Delivery City</label>
-                                                        <input type="text" placeholder="Las Angle" name="city2">
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
 
                                         <div class="request-services-one__form-bottom">
                                             <div class="title-box">
-                                                <h3>Dimensions of Departure:</h3>
+                                                <h3>Data Pelengkap :</h3>
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-xl-3 col-lg-3 col-md-3">
+                                                <div class="col-xl-12 col-lg-12 col-md-12">
                                                     <div class="input-box">
-                                                        <label>Incoterms</label>
-                                                        <div class="select-box">
-                                                            <select class="selectmenu wide">
-                                                                <option selected="selected">Value 1</option>
-                                                                <option>Value 2</option>
-                                                                <option>Value 3</option>
-                                                                <option>Value 4</option>
-                                                            </select>
-                                                        </div>
+                                                        <label>Alamat</label>
+                                                        <textarea class="form-control" name="alamat" style="height: 80px;">{{ old('alamat') }}</textarea>
+                                                        @error('alamat')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                        @enderror
                                                     </div>
                                                 </div>
 
-                                                <div class="col-xl-3 col-lg-3 col-md-3">
-                                                    <div class="input-box">
-                                                        <label>Height</label>
-                                                        <input type="number" placeholder="3" name="height">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xl-3 col-lg-3 col-md-3">
-                                                    <div class="input-box">
-                                                        <label>Width</label>
-                                                        <input type="number" placeholder="3" name="width">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-xl-3 col-lg-3 col-md-3">
-                                                    <div class="input-box">
-                                                        <label>Length</label>
-                                                        <input type="number" placeholder="4" name="length">
-                                                    </div>
-                                                </div>
                                             </div>
 
+
+                                            <div class="row">
+                                                <div class="col-xl-12 col-lg-12 col-md-12">
+                                                    <div class="input-box">
+                                                        <label>Nama Perusahaan</label>
+                                                        <input type="text" name="nama_perusahaan" id="nama_perusahaan" value=""
+                                                            placeholder="Nama Perusahaan">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xl-12 col-lg-12 col-md-12">
+                                                    <div class="input-box">
+                                                        <label>Kode Referal</label>
+                                                        <input type="text" name="kode_referal" id="kode_referal" value=""
+                                                            placeholder="Kode Referal" readonly>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                         
                                             <div class="request-services-one__form-bottom-tag">
                                                 <div class="title">
                                                     <h3>Extra services:</h3>

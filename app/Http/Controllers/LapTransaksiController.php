@@ -395,17 +395,20 @@ class LapTransaksiController extends Controller
     {
         $filterStartDate = $request->start_date ?? today()->format('Y-m-d');
         $filterEndDate = $request->end_date ?? today()->format('Y-m-d');
-
+    
         $transferan = Transaksi::where('jenis_pembayaran', '!=', 'CAD')
                                 ->where('metode_pembayaran', 'Transfer')
                                 ->when($filterStartDate && $filterEndDate, function ($q) use ($filterStartDate, $filterEndDate) {
-                                    return $q->whereDate('tanggal_kirim', '>=', $filterStartDate) // Menambahkan kondisi untuk filter tanggal mulai
-                                        ->whereDate('tanggal_kirim', '<=', $filterEndDate); // Menambahkan kondisi untuk filter tanggal akhir
+                                    return $q->where(function ($query) use ($filterStartDate, $filterEndDate) {
+                                        $query->whereBetween('tanggal_kirim', [$filterStartDate, $filterEndDate])
+                                              ->orWhereBetween('tanggal_terima', [$filterStartDate, $filterEndDate]);
+                                    });
                                 })
                                 ->get();
-
+    
         return view('laporan.transferan.index', compact('transferan', 'filterStartDate', 'filterEndDate'));
     }
+    
 
 
     /**

@@ -15,15 +15,22 @@ class PengeluaranController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+  
+        $filterStartDate = $request->start_date ?? today()->format('Y-m-d');
+        $filterEndDate = $request->end_date ?? today()->format('Y-m-d');
+    
+       
         $pengeluaran = Pengeluaran::when(!$this->isSuperadmin(), function ($q) {
-                                        return $q->where('cabang_id', Auth::user()->cabang_id);
-                                    })
-                                    ->get();
-                                    
-        return view('pengeluaran.index', compact('pengeluaran'));
+                                    return $q->where('cabang_id', Auth::user()->cabang_id);
+                                })
+                                ->whereBetween('tanggal_pengeluaran', [$filterStartDate, $filterEndDate])
+                                ->get();
+                                
+        return view('pengeluaran.index', compact('pengeluaran', 'filterStartDate', 'filterEndDate'));
     }
+    
 
     /**
      * Show the form for creating a new resource.
