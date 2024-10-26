@@ -29,6 +29,7 @@ use App\Http\Controllers\Front\KelebihanController;
 use App\Http\Controllers\Front\DokumentasiController;
 use App\Http\Controllers\Front\KategoriBeritaController;
 use App\Http\Controllers\Front\BeritaController;
+use App\Http\Controllers\Front\GaleriController;
 use App\Http\Controllers\Front\PendaftaranController;
 use App\Http\Controllers\Front\KlienAreaController;
 
@@ -124,6 +125,7 @@ Route::middleware('auth')->group(function () {
 
 
         Route::resource('/slider', SliderController::class);
+        Route::resource('/galeri', GaleriController::class);
         Route::resource('/layanan', LayananController::class);
         Route::resource('/tahap', TahapController::class);
         Route::resource('/alasan', AlasanController::class);

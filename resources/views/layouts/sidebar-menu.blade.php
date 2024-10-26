@@ -310,7 +310,7 @@
 
 
     {{-- <li class="nav-header">Halaman Depan</li> --}}
-    <li class="nav-item{{ Route::is('slider.*') || Route::is('layanan.*') || Route::is('tahap.*') || Route::is('alasan.*') || Route::is('faq.*') || Route::is('kelebihan.*') || Route::is('mitra.*') || Route::is('dokumentasi.*') ? ' menu-is-opening menu-open' : '' }}">
+    <li class="nav-item{{ Route::is('slider.*') || Route::is('galeri.*') || Route::is('layanan.*') || Route::is('tahap.*') || Route::is('alasan.*') || Route::is('faq.*') || Route::is('kelebihan.*') || Route::is('mitra.*') || Route::is('dokumentasi.*') ? ' menu-is-opening menu-open' : '' }}">
 
         <a href="#" class="nav-link">
             <i class="nav-icon fas fa-globe"></i>
@@ -325,6 +325,14 @@
                     <i class="far fa-circle nav-icon" aria-hidden="true"></i>
                     <p>
                         Slider
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('galeri.index') }}" class="nav-link {{ Route::is('galeri.*') ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon" aria-hidden="true"></i>
+                    <p>
+                        Galeri
                     </p>
                 </a>
             </li>
