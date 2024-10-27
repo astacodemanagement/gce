@@ -61,7 +61,6 @@
                                         <div class="input-box">
                                             <label>Email</label>
                                             <input type="email" name="email" id="email" value="" placeholder="Masukkan Email" required="">
-                                            
                                         </div>
                                     </div>
                                     <div class="col-xl-12 col-lg-12 col-md-12">

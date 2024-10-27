@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class RedirectIfNotPengguna
+class RedirectIfNotBackofficeUser
 {
     /**
      * Handle an incoming request.
@@ -17,8 +17,10 @@ class RedirectIfNotPengguna
      */
     public function handle($request, Closure $next)
     {
-        if (!Auth::check() || !Auth::user()->hasRole('pengguna')) {
-            return redirect('/login_pengguna');
+        $backOfficeRoles = ['superadmin', 'manager', 'kasir', 'gudang', 'finance'];
+
+        if (!Auth::check() || !in_array(Auth::user()->roles->pluck('name')[0], $backOfficeRoles)) {
+            return redirect('/');
         }
 
         return $next($request);

@@ -94,7 +94,7 @@ class BerandaController extends Controller
             Auth::login($user);
     
             // Cek apakah role pengguna sesuai
-            if ($user->role === 'pengguna') {
+            if ($user->hasRole('pengguna')) {
                 return redirect()->route('area.index'); // Arahkan ke halaman area jika login berhasil
             }
     
