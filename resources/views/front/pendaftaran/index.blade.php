@@ -240,7 +240,7 @@
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 col-md-12">
                                     <div style="margin-bottom: 10px;">
-                                        <span style="color: grey;">Sudah punya akun? <a href="/login" style="color: #007bff;">Login sekarang</a></span>
+                                        <span style="color: grey;">Sudah punya akun? <a href="/login_pengguna" style="color: #007bff;">Login sekarang</a></span>
                                     </div>
                                 </div>
                             </div>

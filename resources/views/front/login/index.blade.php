@@ -42,22 +42,33 @@
             <div class="col-xl-6 col-lg-8 col-md-10">
                 <div class="tab" id="track">
                     <div class="request-services-one__single-tab">
+                        @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
                         <form id="contact-form2" class="default-form2 contact-form-validated request-services-one__form"
-                            action="assets/inc/sendemail.php" novalidate="novalidate">
+                            action="{{ route('login_pengguna') }}" method="POST" novalidate="novalidate">
+                            @csrf
 
                             <div class="request-services-one__form-top">
                                 <div class="row">
                                     <div class="col-xl-12 col-lg-12 col-md-12">
                                         <div class="input-box">
-                                            <label>Username</label>
-                                            <input type="text" name="username" value="" placeholder="Masukkan Username" required="">
+                                            <label>Email</label>
+                                            <input type="email" name="email" id="email" value="" placeholder="Masukkan Email" required="">
+                                            
                                         </div>
                                     </div>
                                     <div class="col-xl-12 col-lg-12 col-md-12">
                                         <div class="input-box">
                                             <label>Password</label>
-                                            <input type="text" id="password" class="password-input" placeholder="Masukkan Password" name="password">
-                                            <!-- Lihat password link -->
+                                            <input type="text" id="password" name="password" class="password-input" placeholder="Masukkan Password" required="">
+                                            
                                             <div style="margin-top: 5px;">
                                                 <span id="toggle-password" style="color: gray; cursor: pointer;">Lihat Password</span>
                                             </div>
@@ -78,7 +89,7 @@
                             <div class="row">
                                 <div class="col-xl-6 col-lg-6 col-md-6">
                                     <div class="request-services-one__form-btn">
-                                        <button class="thm-btn" type="submit" data-loading-text="Mohon tunggu...">
+                                        <button type="submit" class="thm-btn">
                                             <span class="txt">Masuk Sekarang</span>
                                         </button>
                                     </div>

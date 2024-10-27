@@ -49,22 +49,37 @@ use App\Http\Controllers\Front\KlienAreaController;
 // });
 Route::resource('/', BerandaController::class);
 Route::get('/halaman_berita', [BerandaController::class, 'halaman_berita']);
-Route::get('/login_pengguna', [BerandaController::class, 'login_pengguna']);
+ 
 Route::get('/pendaftaran', [BerandaController::class, 'pendaftaran']);
 Route::post('/pendaftaran/submit_pendaftaran', [PendaftaranController::class, 'submit_pendaftaran'])
     ->name('pendaftaran.submit_pendaftaran')
     ->middleware('throttle:10,1');
 Route::get('/dokumentasi_umum', [BerandaController::class, 'dokumentasi_umum']);
-Route::resource('/area', KlienAreaController::class);
+
 
 
 Auth::routes(['register' => false]);
+
+
+ 
+ 
+Route::resource('/area', KlienAreaController::class)->middleware('auth.pengguna:pengguna');
+ 
+Route::get('/login_pengguna', [BerandaController::class, 'login_pengguna'])->name('login_pengguna');
+Route::post('/login_pengguna', [BerandaController::class, 'proses_login_pengguna']);
+
+ 
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('pengaturan-akun', [AkunController::class, 'index'])->name('pengaturan-akun');
     Route::post('pengaturan-akun/update-akun', [AkunController::class, 'updateAkun'])->name('pengaturan-akun.update-akun');
     Route::post('pengaturan-akun/ubah-password', [AkunController::class, 'ubahPassword'])->name('pengaturan-akun.ubah-password');
+
+ 
+
 
     Route::middleware('role:superadmin')->group(function () {
         Route::resource('/kota', KotaController::class);
