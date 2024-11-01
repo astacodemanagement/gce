@@ -105,6 +105,69 @@
             border-color: black;
         }
     </style>
+
+
+
+    <style>
+        .tracking-timeline {
+            position: relative;
+            padding-left: 20px;
+            border-left: 3px solid #ddd;
+            margin-top: 20px;
+        }
+
+        .timeline-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline-step::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 50%;
+            border: 3px solid #ddd;
+        }
+
+        .timeline-step.completed::before {
+            background-color: #4CAF50;
+            /* Hijau untuk step yang sudah selesai */
+            border-color: #4CAF50;
+        }
+
+        .timeline-step.active::before {
+            background-color: #FFA500;
+            /* Warna oranye untuk step aktif */
+            border-color: #FFA500;
+        }
+
+        .step-marker {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: inherit;
+            border: 3px solid inherit;
+        }
+
+        .step-details h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .step-details p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
 </head>
 
 <body class="">

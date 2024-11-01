@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller; // Tambahkan baris ini
- 
+use App\Models\Konsumen;
 use Illuminate\Http\Request;
- 
+use Illuminate\Support\Facades\Auth;
 
 class KlienAreaController extends Controller
 {
@@ -14,7 +14,11 @@ class KlienAreaController extends Controller
         $title = "Halaman Klien Area";
         $subtitle = "Menu Klien Area";
 
-        return view('front.area.index', compact('title', 'subtitle'));
+        $user = Auth::user();
+
+        $konsumen = Konsumen::where('user_id', $user->id)->first();
+
+        return view('front.area.index', compact('title', 'subtitle', 'user', 'konsumen'));
     }
  
 
