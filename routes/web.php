@@ -55,6 +55,7 @@ Route::post('/pendaftaran/submit_pendaftaran', [PendaftaranController::class, 's
     ->name('pendaftaran.submit_pendaftaran')
     ->middleware('throttle:10,1');
 Route::get('/dokumentasi_umum', [BerandaController::class, 'dokumentasi_umum']);
+Route::get('/halaman_galeri', [BerandaController::class, 'halaman_galeri']);
 
 
 

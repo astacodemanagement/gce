@@ -181,6 +181,7 @@
                                                                 </li>
                                                                 <li><a href="">Karir</a>
                                                                 </li>
+                                                                <li><a href="/halaman_galeri">Galeri</a></li>
                                                                 <li><a href="">Kontak</a></li>
 
                                                             </ul>
@@ -199,15 +200,32 @@
                                                         class="main-menu__search search-toggler icon-magnifying-glass"></a>
                                                 </div>
 
-
                                                 <div class="btn-box">
-                                                    <a class="thm-btn" href="/login_pengguna"
-                                                        style="background-color: black; color:white;">
-                                                        <span class="txt" style="color: white">Login /
-                                                            Daftar</span>
+                                                    @if(Auth::check() && Auth::user()->role === 'pengguna')
+                                                    <a class="thm-btn" href="/area" style="background-color: black; color:white; margin-right: 10px;">
+                                                        <span class="txt" style="color: white">Dashboard</span>
                                                         <i class="fa-solid fa-user"></i>
                                                     </a>
+
+                                                    <!-- Tombol Logout -->
+                                                    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <button type="submit" class="thm-btn" style="background-color: red; color:white;">
+                                                            <span class="txt" style="color: white">Logout</span>
+                                                            <i class="fa-solid fa-sign-out-alt"></i>
+                                                        </button>
+                                                    </form>
+                                                    @else
+                                                    <a class="thm-btn" href="/login_pengguna" style="background-color: black; color:white;">
+                                                        <span class="txt" style="color: white">Login / Daftar</span>
+                                                        <i class="fa-solid fa-user"></i>
+                                                    </a>
+                                                    @endif
                                                 </div>
+
+
+
+
                                             </div>
                                         </div>
                                     </div>
@@ -252,13 +270,30 @@
 
 
                             <div class="btn-box">
-                                <a class="thm-btn" href="/login_pengguna"
-                                    style="background-color: black; color:white;">
-                                    <span class="txt" style="color: white">Login /
-                                        Daftar</span>
+                                @if(Auth::check() && Auth::user()->role === 'pengguna')
+                                <a class="thm-btn" href="/area" style="background-color: black; color:white; margin-right: 10px;">
+                                    <span class="txt" style="color: white">Dashboard</span>
                                     <i class="fa-solid fa-user"></i>
                                 </a>
+
+                                <!-- Tombol Logout -->
+                                <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    <button type="submit" class="thm-btn" style="background-color: red; color:white;">
+                                        <span class="txt" style="color: white">Logout</span>
+                                        <i class="fa-solid fa-sign-out-alt"></i>
+                                    </button>
+                                </form>
+                                @else
+                                <a class="thm-btn" href="/login_pengguna" style="background-color: black; color:white;">
+                                    <span class="txt" style="color: white">Login / Daftar</span>
+                                    <i class="fa-solid fa-user"></i>
+                                </a>
+                                @endif
                             </div>
+
+
+
                         </div>
                         </nav>
                     </div>

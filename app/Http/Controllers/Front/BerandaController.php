@@ -7,6 +7,7 @@ use App\Models\Alasan;
 use App\Models\Berita;
 use App\Models\Dokumentasi;
 use App\Models\Faq;
+use App\Models\Galeri;
 use App\Models\KategoriBerita;
 use App\Models\Konsumen;
 use App\Models\Layanan;
@@ -119,6 +120,15 @@ class BerandaController extends Controller
         $dokumentasi = Dokumentasi::orderBy('urutan', 'asc')->get();
 
         return view('front.dokumentasi.index', compact('title', 'subtitle', 'dokumentasi'));
+    }
+
+    public function halaman_galeri()
+    {
+        $title = "Halaman Galeri";
+        $subtitle = "Menu Galeri";
+        $galeri = Galeri::orderBy('urutan', 'asc')->paginate(3);
+
+        return view('front.galeri.index', compact('title', 'subtitle', 'galeri'));
     }
 
 
