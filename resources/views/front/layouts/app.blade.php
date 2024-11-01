@@ -248,6 +248,18 @@
                                 </li>
                             </ul>
                         </div>
+                        <div class="main-header-one__bottom-right">
+
+
+                            <div class="btn-box">
+                                <a class="thm-btn" href="/login_pengguna"
+                                    style="background-color: black; color:white;">
+                                    <span class="txt" style="color: white">Login /
+                                        Daftar</span>
+                                    <i class="fa-solid fa-user"></i>
+                                </a>
+                            </div>
+                        </div>
                         </nav>
                     </div>
                     <div class="menu-backdrop"></div>
