@@ -1,10 +1,6 @@
 @extends('layouts.app')
 @section('title', $title)
 @section('subtitle', $subtitle)
-@push('css')
-<link rel="stylesheet" href="{{ asset('template') }}/plugins/summernote/summernote-bs4.min.css">
-@endpush
-
 
 @section('content')
 <div class="card">
@@ -15,7 +11,7 @@
             <thead>
                 <tr>
                     <th width="5%">No</th>
-                    <th>Nama Dokumentasi</th>
+                    <th>Nama Informasi</th>
                     <th>Deskripsi</th>
                     <th width="5%">Gambar</th>
                     <th width="15%">Aksi</th>
@@ -23,15 +19,15 @@
             </thead>
             <tbody>
                 @php $i = 1; @endphp
-                @foreach ($dokumentasi as $p)
+                @foreach ($informasi as $p)
                 <tr>
                     <td>{{ $i }}</td>
-                    <td>{{ $p->nama_dokumentasi }}</td>
-                    <td>{!! \Illuminate\Support\Str::limit(strip_tags($p->deskripsi), 20, '...') !!}</td>
+                    <td>{{ $p->nama_informasi }}</td>
+                    <td>{{ $p->deskripsi }}</td>
                     <td>
-                        <a href="/upload/dokumentasi/{{ $p->gambar }}" target="_blank">
+                        <a href="/upload/informasi/{{ $p->gambar }}" target="_blank">
                             <img style="max-width:100px; max-height:100px"
-                                src="/upload/dokumentasi/{{ $p->gambar }}" alt="">
+                                src="/upload/informasi/{{ $p->gambar }}" alt="">
                         </a>
                     </td>
                     <td>
@@ -54,7 +50,7 @@
 <!-- /.card -->
 
 <div class="modal fade" id="modal-tambah">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Form {{ $subtitle }}</h4>
@@ -70,15 +66,15 @@
                     </div>
                     <!-- /.card-header -->
                     <!-- form start -->
-                    <form id="form-tambah" action="{{ route('dokumentasi.store') }}" method="POST" enctype="multipart/form-data">
+                    <form id="form-tambah" action="{{ route('informasi.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf <!-- Tambahkan token CSRF -->
                         <div class="card-body">
 
                             <div class="col-lg-12">
                                 <div class="mb-4">
-                                    <label for="nama_dokumentasi" class="form-label fw-semibold">Nama Dokumentasi</label>
+                                    <label for="nama_informasi" class="form-label fw-semibold">Nama Informasi</label>
                                     <span class="text-danger">*</span> <!-- Menambahkan span untuk keterangan -->
-                                    <input type="text" class="form-control" id="nama_dokumentasi" name="nama_dokumentasi"
+                                    <input type="text" class="form-control" id="nama_informasi" name="nama_informasi"
                                         placeholder="Ex : Nama" required>
                                 </div>
                             </div>
@@ -174,7 +170,7 @@
 </div>
 
 <div class="modal fade" id="modal-edit">
-    <div class="modal-dialog  modal-xl">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Form Edit {{ $subtitle }}</h4>
@@ -197,8 +193,8 @@
                         <div class="card-body">
                             <!-- Tambahkan field input yang sesuai di sini -->
                             <div class="form-group">
-                                <label for="nama_dokumentasi_edit">Nama Dokumentasi</label>
-                                <input type="text" class="form-control" id="nama_dokumentasi_edit" name="nama_dokumentasi" required>
+                                <label for="nama_informasi_edit">Nama Informasi</label>
+                                <input type="text" class="form-control" id="nama_informasi_edit" name="nama_informasi" required>
                             </div>
                             <div class="form-group">
                                 <label for="link_edit">Link</label>
@@ -284,33 +280,6 @@
 @push('script')
 {{-- SKRIP TAMBAHAN --}}
 
-{{-- Summernote --}}
-<script>
-    $(function() {
-        // Summernote
-        $('#deskripsi').summernote({
-            height: 200
-        });
-
-
-    })
-</script>
-{{-- Summernote --}}
-
-
-<script>
-    $(function() {
-        $('#deskripsi_edit').summernote({
-            height: 200,
-            callbacks: {
-                onInit: function() {
-                    $('#deskripsi_edit').summernote('code', data.deskripsi_edit);
-                }
-            }
-        });
-    });
-</script>
-
 {{-- PERINTAH SIMPAN DATA --}}
 <script>
     $(document).ready(function() {
@@ -325,7 +294,7 @@
             tombolSimpan.prop('disabled', true).text('Menyimpan...');
 
             $.ajax({
-                url: '{{ route('dokumentasi.store') }}',
+                url: '{{ route('informasi.store') }}',
                 type: 'POST',
                 data: formData,
                 processData: false, // Menghindari jQuery memproses data
@@ -397,15 +366,15 @@
 
             $.ajax({
                 method: 'GET',
-                url: '{{ route("dokumentasi.edit", ":id") }}'.replace(':id', id), // Memperbaiki penempatan tanda kutip
+                url: '{{ route("informasi.edit", ":id") }}'.replace(':id', id), // Memperbaiki penempatan tanda kutip
                 success: function(data) {
                     console.log(data); // Cek data yang diterima dari server
                     // Mengisi data pada form modal
                     $('.id').val(data.id);
-                    $('#nama_dokumentasi_edit').val(data.nama_dokumentasi);
+                    $('#nama_informasi_edit').val(data.nama_informasi);
                     $('#link_edit').val(data.link);
                     $('#urutan_edit').val(data.urutan);
-                    $('#deskripsi_edit').summernote('code', data.deskripsi);
+                    $('#deskripsi_edit').val(data.deskripsi);
                     $('#modal-edit').modal('show');
                 },
 
@@ -438,7 +407,7 @@
 
             $.ajax({
                 type: 'POST', // Gunakan POST karena kita override dengan PUT
-                url: '/dokumentasi/' + id,
+                url: '/informasi/' + id,
                 data: formData,
                 // headers: {
                 //     'X-HTTP-Method-Override': 'PUT'
@@ -524,7 +493,7 @@
                 if (result.isConfirmed) {
                     // Lakukan permintaan AJAX ke endpoint penghapusan
                     $.ajax({
-                        url: '{{ route("dokumentasi.destroy", ":id") }}'.replace(':id', id), // Memperbaiki penempatan tanda kutip
+                        url: '{{ route("informasi.destroy", ":id") }}'.replace(':id', id), // Memperbaiki penempatan tanda kutip
                         type: 'DELETE',
                         data: {
                             "_token": "{{ csrf_token() }}",

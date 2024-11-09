@@ -29,9 +29,14 @@ use App\Http\Controllers\Front\KelebihanController;
 use App\Http\Controllers\Front\DokumentasiController;
 use App\Http\Controllers\Front\KategoriBeritaController;
 use App\Http\Controllers\Front\BeritaController;
+use App\Http\Controllers\Front\ChatController;
 use App\Http\Controllers\Front\GaleriController;
+use App\Http\Controllers\Front\HalamanStatisController;
+use App\Http\Controllers\Front\InformasiController;
 use App\Http\Controllers\Front\PendaftaranController;
 use App\Http\Controllers\Front\KlienAreaController;
+use App\Http\Controllers\Front\LoginController;
+use App\Models\HalamanStatis;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,24 +54,26 @@ use App\Http\Controllers\Front\KlienAreaController;
 // });
 Route::resource('/', BerandaController::class);
 Route::get('/halaman_berita', [BerandaController::class, 'halaman_berita']);
- 
+
 Route::get('/pendaftaran', [BerandaController::class, 'pendaftaran']);
 Route::post('/pendaftaran/submit_pendaftaran', [PendaftaranController::class, 'submit_pendaftaran'])
     ->name('pendaftaran.submit_pendaftaran')
     ->middleware('throttle:10,1');
 Route::get('/dokumentasi_umum', [BerandaController::class, 'dokumentasi_umum']);
 Route::get('/halaman_galeri', [BerandaController::class, 'halaman_galeri']);
+Route::get('/halaman/{slug}', [BerandaController::class, 'halaman'])->name('halaman');
 
 
 
 Auth::routes(['register' => false]);
 
-Route::get('/login_pengguna', [BerandaController::class, 'login_pengguna'])->name('login_pengguna');
-Route::post('/login_pengguna', [BerandaController::class, 'proses_login_pengguna']);
+Route::get('/login_pengguna', [LoginController::class, 'login_pengguna'])->name('login_pengguna');
+Route::post('/login_pengguna', [LoginController::class, 'proses_login_pengguna']);
 
 /** MIDDLEWARE UNTUK PENGGUNA */
 Route::middleware(['auth.pengguna', 'role:pengguna'])->group(function () {
     Route::resource('/area', KlienAreaController::class)->middleware('role:pengguna');
+    Route::post('/chatting/send', [KlienAreaController::class, 'sendMessage'])->name('chatting.send');
 });
 
 Route::middleware('auth')->group(function () {
@@ -78,7 +85,7 @@ Route::middleware('auth')->group(function () {
         Route::post('pengaturan-akun/update-akun', [AkunController::class, 'updateAkun'])->name('pengaturan-akun.update-akun');
         Route::post('pengaturan-akun/ubah-password', [AkunController::class, 'ubahPassword'])->name('pengaturan-akun.ubah-password');
 
-    
+
 
 
         Route::middleware('role:superadmin')->group(function () {
@@ -141,6 +148,8 @@ Route::middleware('auth')->group(function () {
 
             Route::resource('/slider', SliderController::class);
             Route::resource('/galeri', GaleriController::class);
+            Route::resource('/informasi', InformasiController::class);
+            Route::resource('/halaman_statis', HalamanStatisController::class);
             Route::resource('/layanan', LayananController::class);
             Route::resource('/tahap', TahapController::class);
             Route::resource('/alasan', AlasanController::class);
@@ -152,6 +161,13 @@ Route::middleware('auth')->group(function () {
             Route::resource('/kategori_berita', KategoriBeritaController::class);
             Route::resource('/berita', BeritaController::class);
             Route::resource('/data_pendaftaran', PendaftaranController::class);
+            Route::resource('/chat', ChatController::class);
+
+
+            // Route untuk menandai percakapan sebagai sudah dibaca (menggunakan PATCH)
+            Route::patch('/chat/{chat}/mark-as-read', [ChatController::class, 'markAsRead'])->name('chat.markAsRead');
+
+            Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
         });
 
         Route::middleware('role:superadmin|gudang')->group(function () {
@@ -329,7 +345,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('role:superadmin|manager|kasir')->group(function () {
             Route::get('/resi/{id}/detail/{module?}', [TransaksiController::class, 'detailResi']);
         });
-        
+
         Route::get('update-tanggal-otomatis', function () {
             \App\Models\Transaksi::whereNull('tanggal_terima_otomatis')->each(function ($query) {
                 $tanggalTerimaOtomatis = \Carbon\Carbon::parse($query->tanggal_kirim)->addDays(1)->format('Y-m-d');

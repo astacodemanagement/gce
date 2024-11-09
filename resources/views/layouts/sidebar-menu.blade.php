@@ -337,6 +337,14 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('halaman_statis.index') }}" class="nav-link {{ Route::is('halaman_statis.*') ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon" aria-hidden="true"></i>
+                    <p>
+                        Halaman Statis
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('layanan.index') }}" class="nav-link {{ Route::is('layanan.*') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon" aria-hidden="true"></i>
                     <p>
@@ -393,6 +401,14 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('informasi.index') }}" class="nav-link {{ Route::is('informasi.*') ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon" aria-hidden="true"></i>
+                    <p>
+                        Informasi
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('dokumentasi.index') }}" class="nav-link {{ Route::is('dokumentasi.*') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon" aria-hidden="true"></i>
                     <p>
@@ -438,39 +454,38 @@
 
 
     <li class="nav-item">
-
         <a href="#" class="nav-link">
             <i class="nav-icon fas fa-inbox"></i>
             <p>
                 Pendaftaran
                 <i class="right fas fa-angle-left"></i>
             </p>
-            @if ($nonActiveUserCount > 0)
-            <span class="badge bg-danger">{{ $nonActiveUserCount }}</span>
+            @if ($nonActiveUserCount > 0 || $unreadMessagesCount > 0)
+            <span class="right badge badge-danger">Baru</span>
             @endif
         </a>
         <ul class="nav nav-treeview">
             <li class="nav-item">
                 <a href="{{ route('data_pendaftaran.index') }}" class="nav-link {{ Route::is('data_pendaftaran.*') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon" aria-hidden="true"></i>
-                    <p>
-                        Data Masuk
-                    </p>
+                    <p>Data Baru</p>
                     @if ($nonActiveUserCount > 0)
                     <span class="badge bg-danger">{{ $nonActiveUserCount }}</span>
                     @endif
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('berita.index') }}" class="nav-link {{ Route::is('berita.*') ? 'active' : '' }}">
+                <a href="{{ route('chat.index') }}" class="nav-link {{ Route::is('chat.*') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon" aria-hidden="true"></i>
-                    <p>
-                        Konsumen
-                    </p>
+                    <p>Chat</p>
+                    @if ($unreadMessagesCount > 0)
+                    <span class="badge bg-danger">{{ $unreadMessagesCount }}</span>
+                    @endif
                 </a>
             </li>
         </ul>
     </li>
+
 
     <li class="nav-item">
         <a href="/" class="nav-link" target="_blank">

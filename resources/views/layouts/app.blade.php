@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+
     <title>{{ $profil->nama_profil }}</title>
 
     <!-- Google Font: Source Sans Pro -->
@@ -42,7 +42,59 @@
     <link rel="stylesheet" href="{{ asset('template/dist/css/adminlte.min.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-    
+    <style>
+        .chat-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 75%;
+            position: relative;
+        }
+
+        /* Sender (Admin) di kanan */
+        .sender {
+            background-color: #e0f7fa;
+            color: black;
+            text-align: right;
+            margin-left: auto;
+            /* Menggeser pesan ke kanan */
+            margin-right: 0;
+            border-radius: 15px 15px 0 15px;
+            /* Rounded corners untuk sender di kanan */
+        }
+
+        /* Receiver (Konsumen) di kiri */
+        .receiver {
+            background-color: #f1f1f1;
+            color: black;
+            text-align: left;
+            margin-right: auto;
+            /* Menggeser pesan ke kiri */
+            margin-left: 0;
+            border-radius: 15px 15px 15px 0;
+            /* Rounded corners untuk receiver di kiri */
+        }
+
+        .chat-time {
+            display: block;
+            font-size: 0.8em;
+            color: gray;
+            margin-top: 5px;
+            text-align: right;
+            /* Menyelaraskan waktu dengan pengirim */
+        }
+    </style>
+
+
 
     <style>
         /* CSS untuk menyembunyikan div saat mencetak */
@@ -86,7 +138,7 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     @php
-                        $namaCabang = auth()->user()->cabang ? auth()->user()->cabang->nama_cabang : null;
+                    $namaCabang = auth()->user()->cabang ? auth()->user()->cabang->nama_cabang : null;
                     @endphp
                     <b class="nav-link" role="button">
                         <span class="badge bg-primary">
@@ -130,59 +182,59 @@
                             <!-- Message Start -->
                             <div class="media">
                                 <img src="{{ asset('template') }}/dist/img/user1-128x128.jpg" alt="User Avatar"
-                                    class="img-size-50 mr-3 img-circle">
-                                <div class="media-body">
-                                    <h3 class="dropdown-item-title">
-                                        Brad Diesel
-                                        <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                                    </h3>
-                                    <p class="text-sm">Call me whenever you can...</p>
-                                    <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="{{ asset('template') }}/dist/img/user8-128x128.jpg" alt="User Avatar"
-                                    class="img-size-50 img-circle mr-3">
-                                <div class="media-body">
-                                    <h3 class="dropdown-item-title">
-                                        John Pierce
-                                        <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                                    </h3>
-                                    <p class="text-sm">I got your message bro</p>
-                                    <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <!-- Message Start -->
-                            <div class="media">
-                                <img src="{{ asset('template') }}/dist/img/user3-128x128.jpg" alt="User Avatar"
-                                    class="img-size-50 img-circle mr-3">
-                                <div class="media-body">
-                                    <h3 class="dropdown-item-title">
-                                        Nora Silvester
-                                        <span class="float-right text-sm text-warning"><i
-                                                class="fas fa-star"></i></span>
-                                    </h3>
-                                    <p class="text-sm">The subject goes here</p>
-                                    <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-                                </div>
-                            </div>
-                            <!-- Message End -->
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-                    </div>
-                </li> --}}
-                <!-- Notifications Dropdown Menu -->
-                {{-- <li class="nav-item dropdown">
+                class="img-size-50 mr-3 img-circle">
+                <div class="media-body">
+                    <h3 class="dropdown-item-title">
+                        Brad Diesel
+                        <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                    </h3>
+                    <p class="text-sm">Call me whenever you can...</p>
+                    <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+                </div>
+    </div>
+    <!-- Message End -->
+    </a>
+    <div class="dropdown-divider"></div>
+    <a href="#" class="dropdown-item">
+        <!-- Message Start -->
+        <div class="media">
+            <img src="{{ asset('template') }}/dist/img/user8-128x128.jpg" alt="User Avatar"
+                class="img-size-50 img-circle mr-3">
+            <div class="media-body">
+                <h3 class="dropdown-item-title">
+                    John Pierce
+                    <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">I got your message bro</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+            </div>
+        </div>
+        <!-- Message End -->
+    </a>
+    <div class="dropdown-divider"></div>
+    <a href="#" class="dropdown-item">
+        <!-- Message Start -->
+        <div class="media">
+            <img src="{{ asset('template') }}/dist/img/user3-128x128.jpg" alt="User Avatar"
+                class="img-size-50 img-circle mr-3">
+            <div class="media-body">
+                <h3 class="dropdown-item-title">
+                    Nora Silvester
+                    <span class="float-right text-sm text-warning"><i
+                            class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">The subject goes here</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+            </div>
+        </div>
+        <!-- Message End -->
+    </a>
+    <div class="dropdown-divider"></div>
+    <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+    </div>
+    </li> --}}
+    <!-- Notifications Dropdown Menu -->
+    {{-- <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
                         <i class="far fa-bell"></i>
                         <span class="badge badge-warning navbar-badge">15</span>
@@ -208,25 +260,25 @@
                         <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
                     </div>
                 </li> --}}
-                <!-- Notifications Dropdown Menu -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="fas fa-user-cog"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <a href="{{ route('pengaturan-akun') }}" class="dropdown-item">
-                            <i class="fas fa-user-lock mr-2"></i> Pengaturan Akun
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item logout">
-                            <i class="fas fa-sign-out-alt mr-2"></i> Keluar
-                        </a>
-                        <form action="{{ route('logout') }}" class="form-logout" method="POST">
-                            @csrf
-                        </form>
-                    </div>
-                </li>
-                {{-- <li class="nav-item">
+    <!-- Notifications Dropdown Menu -->
+    <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+            <i class="fas fa-user-cog"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <a href="{{ route('pengaturan-akun') }}" class="dropdown-item">
+                <i class="fas fa-user-lock mr-2"></i> Pengaturan Akun
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item logout">
+                <i class="fas fa-sign-out-alt mr-2"></i> Keluar
+            </a>
+            <form action="{{ route('logout') }}" class="form-logout" method="POST">
+                @csrf
+            </form>
+        </div>
+    </li>
+    {{-- <li class="nav-item">
                     <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                         <i class="fas fa-expand-arrows-alt"></i>
                     </a>
@@ -237,104 +289,105 @@
                         <i class="fas fa-th-large"></i>
                     </a>
                 </li> --}}
-            </ul>
-        </nav>
-        <!-- /.navbar -->
+    </ul>
+    </nav>
+    <!-- /.navbar -->
 
-        <!-- Main Sidebar Container -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <!-- Brand Logo -->
-            <a href="{{ route('dashboard') }}" class="brand-link">
-                <img src="{{ asset('template/dist/img/logo_gce.png') }}" alt="GCE Logo"
-                    class="brand-image img-circle elevation-3" style="opacity: .8">
-                <span class="brand-text font-weight-light">GCE - Logistik</span>
-            </a>
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Brand Logo -->
+        <a href="{{ route('dashboard') }}" class="brand-link">
+            <img src="{{ asset('template/dist/img/logo_gce.png') }}" alt="GCE Logo"
+                class="brand-image img-circle elevation-3" style="opacity: .8">
+            <span class="brand-text font-weight-light">GCE - Logistik</span>
+        </a>
 
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <!-- Sidebar user panel (optional) -->
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <img src="{{ asset('images/profile.png') }}" class="img-circle elevation-2"
-                            alt="User Image">
-                    </div>
-                    <div class="info">
-                        <a href="#" class="d-block">
-                            <div style="line-height: 7px" title="{{ auth()->user()->name }}">
-                                {{ auth()->user()->name }}</div>
-                            <small class="text-muted">{{ ucwords(auth()->user()->roles[0]->name) }}</small>
-                        </a>
-                    </div>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Sidebar user panel (optional) -->
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="image">
+                    <img src="{{ asset('images/profile.png') }}" class="img-circle elevation-2"
+                        alt="User Image">
                 </div>
-
-                <!-- SidebarSearch Form -->
-                <div class="form-inline">
-                    <div class="input-group" data-widget="sidebar-search">
-                        <input class="form-control form-control-sidebar" type="search" placeholder="Search"
-                            aria-label="Search">
-                        <div class="input-group-append">
-                            <button class="btn btn-sidebar">
-                                <i class="fas fa-search fa-fw"></i>
-                            </button>
+                <div class="info">
+                    <a href="#" class="d-block">
+                        <div style="line-height: 7px" title="{{ auth()->user()->name }}">
+                            {{ auth()->user()->name }}
                         </div>
+                        <small class="text-muted">{{ ucwords(auth()->user()->roles[0]->name) }}</small>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SidebarSearch Form -->
+            <div class="form-inline">
+                <div class="input-group" data-widget="sidebar-search">
+                    <input class="form-control form-control-sidebar" type="search" placeholder="Search"
+                        aria-label="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-sidebar">
+                            <i class="fas fa-search fa-fw"></i>
+                        </button>
                     </div>
                 </div>
-
-                <!-- Sidebar Menu -->
-                <nav class="mt-2">
-                    @include('layouts.sidebar-menu')
-                </nav>
-                <!-- /.sidebar-menu -->
             </div>
-            <!-- /.sidebar -->
-        </aside>
 
-        <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper">
-            <!-- Content Header (Page header) -->
-            <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h1 class="m-0">@yield('title')</h1>
-                        </div><!-- /.col -->
-                        <div class="col-sm-6">
-                            <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                                <li class="breadcrumb-item active">@yield('title')</li>
-                            </ol>
-                        </div><!-- /.col -->
-                    </div><!-- /.row -->
-                </div><!-- /.container-fluid -->
-            </div>
-            <!-- /.content-header -->
-
-            <!-- Main content -->
-            <section class="content">
-                <div class="container-fluid">
-
-                    @yield('content')
-
-                    <!-- /.row (main row) -->
-                </div><!-- /.container-fluid -->
-            </section>
-            <!-- /.content -->
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                @include('layouts.sidebar-menu')
+            </nav>
+            <!-- /.sidebar-menu -->
         </div>
-        <!-- /.content-wrapper -->
-        <footer class="main-footer" id="unhide">
-            <strong>Copyright &copy; <span id="currentYear"></span> <a href="">GCE</a>.</strong>
-            All rights reserved.
-            <div class="float-right d-none d-sm-inline-block">
-                <b>Version</b> 1.0
-            </div>
-        </footer>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">@yield('title')</h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="/">Home</a></li>
+                            <li class="breadcrumb-item active">@yield('title')</li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+
+                @yield('content')
+
+                <!-- /.row (main row) -->
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer class="main-footer" id="unhide">
+        <strong>Copyright &copy; <span id="currentYear"></span> <a href="">GCE</a>.</strong>
+        All rights reserved.
+        <div class="float-right d-none d-sm-inline-block">
+            <b>Version</b> 1.0
+        </div>
+    </footer>
 
 
-        <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <!-- Control sidebar content goes here -->
-        </aside>
-        <!-- /.control-sidebar -->
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
 

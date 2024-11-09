@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Illuminate\Validation\Rule;
 
 class PendaftaranController extends Controller
 {
@@ -30,7 +31,7 @@ class PendaftaranController extends Controller
 
     public function submit_pendaftaran(Request $request)
     {
-         
+
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'kategori_konsumen' => 'required|string',
@@ -38,14 +39,34 @@ class PendaftaranController extends Controller
             'jenis_kelamin' => 'required|string|in:Pria,Wanita',
             'email' => 'required|email|unique:users,email|max:255',
             'password' => 'required|min:8|confirmed',
-            'no_telp' => 'required|string|max:15|unique:konsumen,no_telp',
+            'no_telp' => [
+                'required',
+                'string',
+                'max:15',
+                Rule::unique('konsumen', 'no_telp'),
+                Rule::unique('users', 'no_telp'),
+            ],
             'alamat' => 'required|string|max:500',
             'tanggal_lahir' => 'required|date',
             'kode_referal' => 'nullable|string|max:10',
             'g-recaptcha-response' => 'required|recaptchav3:register,0.5'
+        ], [
+            'nama_lengkap.required' => 'Nama lengkap harus diisi.',
+            'kategori_konsumen.required' => 'Kategori konsumen harus diisi.',
+            'email.required' => 'Email harus diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'password.required' => 'Password harus diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'no_telp.required' => 'Nomor telepon harus diisi.',
+            'no_telp.unique' => 'Nomor telepon sudah terdaftar.',
+            'alamat.required' => 'Alamat harus diisi.',
+            'tanggal_lahir.required' => 'Tanggal lahir harus diisi.',
+            'g-recaptcha-response.required' => 'Anda harus melewati reCAPTCHA.',
         ]);
 
-       
+
         $sanitizedInput = [
             'nama_lengkap' => htmlspecialchars(strip_tags($request->nama_lengkap)),
             'kategori_konsumen' => htmlspecialchars(strip_tags($request->kategori_konsumen)),
@@ -54,11 +75,10 @@ class PendaftaranController extends Controller
             'email' => htmlspecialchars(strip_tags($request->email)),
             'no_telp' => htmlspecialchars(strip_tags($request->no_telp)),
             'alamat' => htmlspecialchars(strip_tags($request->alamat)),
-            'tanggal_lahir' => $request->tanggal_lahir, // Tanggal tidak perlu disanitasi
+            'tanggal_lahir' => $request->tanggal_lahir,
             'kode_referal' => htmlspecialchars(strip_tags($request->kode_referal)),
         ];
 
-        
         $user = User::create([
             'email' => $sanitizedInput['email'],
             'status' => 'Non Aktif',
@@ -89,7 +109,7 @@ class PendaftaranController extends Controller
         $profil = Profil::first();
         $no_wa = $profil ? $profil->no_wa : 'Tertera';
 
-        return redirect()->back()->with('success', 'Data Pendaftaran berhasil dikirimkan! Informasi selanjutnya bisa hubungi No : ' . $no_wa);
+        return redirect()->back()->with('success', 'Data Pendaftaran berhasil dikirimkan! Informasi selanjutnya bisa <a href="https://wa.me/' . $no_wa . '" target="_blank">Klik Link WhatsApp Ini</a>');
     }
 
 

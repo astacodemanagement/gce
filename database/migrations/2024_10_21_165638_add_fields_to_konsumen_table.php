@@ -14,11 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('konsumen', function (Blueprint $table) {
-           
             $table->string('jenis_konsumen')->nullable()->after('status_cad');
-     
             $table->timestamp('tanggal_approve')->nullable()->after('jenis_konsumen');
- 
             $table->string('user_approve')->nullable()->after('tanggal_approve');
             $table->string('alasan')->nullable()->after('user_approve');
         });

@@ -8,6 +8,7 @@ use App\Models\Berita;
 use App\Models\Dokumentasi;
 use App\Models\Faq;
 use App\Models\Galeri;
+use App\Models\HalamanStatis;
 use App\Models\KategoriBerita;
 use App\Models\Konsumen;
 use App\Models\Layanan;
@@ -64,53 +65,6 @@ class BerandaController extends Controller
         return view('front.pendaftaran.index', compact('title', 'subtitle'));
     }
 
-    public function login_pengguna()
-    {
-        $title = "Halaman Login";
-        $subtitle = "Menu Login";
-
-
-
-        return view('front.login.index', compact('title', 'subtitle'));
-    }
-
-
-    public function proses_login_pengguna(Request $request)
-    {
-        // Validasi input dari form
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-    
-        // Ambil pengguna berdasarkan email
-        $user = User::where('email', $request->email)->first();
-    
-        // Cek apakah pengguna ditemukan dan password benar
-        if ($user && Hash::check($request->password, $user->password)) {
-            // Debug: Cek apakah pengguna berhasil login dan role-nya
-            Log::info('User attempting to login:', ['email' => $user->email, 'role' => $user->role]);
-    
-            // Autentikasi pengguna
-            Auth::login($user);
-    
-            // Cek apakah role pengguna sesuai
-            if ($user->hasRole('pengguna')) {
-                return redirect()->route('area.index'); // Arahkan ke halaman area jika login berhasil
-            }
-    
-            // Logout jika role tidak sesuai
-            Auth::logout();
-            Log::warning('User logged out due to role mismatch:', ['email' => $user->email, 'role' => $user->role]);
-            return redirect()->route('login_pengguna')->withErrors('Akses hanya untuk pengguna.');
-        }
-    
-        // Jika gagal login, kembalikan dengan pesan error
-        return back()->withErrors('Email atau password salah.');
-    }
-    
-    
-    
 
 
     public function dokumentasi_umum()
@@ -129,6 +83,15 @@ class BerandaController extends Controller
         $galeri = Galeri::orderBy('urutan', 'asc')->paginate(3);
 
         return view('front.galeri.index', compact('title', 'subtitle', 'galeri'));
+    }
+
+    
+    public function halaman($slug)
+    {
+        $title = "Halaman";
+        $subtitle = "Menu";
+        $halaman = HalamanStatis::where('slug', $slug)->firstOrFail();
+        return view('front.halaman.index', compact('halaman', 'title', 'subtitle'));
     }
 
 

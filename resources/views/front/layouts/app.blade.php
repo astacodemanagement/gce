@@ -28,10 +28,52 @@
     <link rel="stylesheet" href="{{ asset('template/front') }}/assets/css/style.css">
     <link rel="stylesheet" href="{{ asset('template/front') }}/assets/css/responsive.css">
     <style>
+        .chat-container {
+            max-height: 500px;
+            /* Tinggi maksimum container */
+            overflow-y: auto;
+            /* Tambahkan scroll vertikal */
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .chat-message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            max-width: 70%;
+            /* Batasi lebar maksimum pesan */
+        }
+
+        .chat-message.sender {
+            background-color: #d1f7d1;
+            text-align: right;
+            margin-left: auto;
+            /* Tempatkan pesan sender di sisi kanan */
+        }
+
+        .chat-message.receiver {
+            background-color: #f7f7f7;
+            text-align: left;
+            margin-right: auto;
+            /* Tempatkan pesan receiver di sisi kiri */
+        }
+
+        .chat-time {
+            font-size: 12px;
+            color: #888;
+            display: block;
+            margin-top: 5px;
+        }
+    </style>
+
+    <style>
         .grecaptcha-badge {
             visibility: hidden !important;
         }
     </style>
+
     <style>
         body {
             background-color: black;
@@ -263,8 +305,9 @@
                                                         class="main-menu__search search-toggler icon-magnifying-glass"></a>
                                                 </div>
 
+
                                                 <div class="btn-box">
-                                                    @if(Auth::check() && Auth::user()->role === 'pengguna')
+                                                    @if(Auth::check() && Auth::user()->hasRole('pengguna'))
                                                     <a class="thm-btn" href="/area" style="background-color: black; color:white; margin-right: 10px;">
                                                         <span class="txt" style="color: white">Dashboard</span>
                                                         <i class="fa-solid fa-user"></i>
@@ -333,7 +376,7 @@
 
 
                             <div class="btn-box">
-                                @if(Auth::check() && Auth::user()->role === 'pengguna')
+                                @if(Auth::check() && Auth::user()->hasRole('pengguna'))
                                 <a class="thm-btn" href="/area" style="background-color: black; color:white; margin-right: 10px;">
                                     <span class="txt" style="color: white">Dashboard</span>
                                     <i class="fa-solid fa-user"></i>
@@ -354,6 +397,8 @@
                                 </a>
                                 @endif
                             </div>
+
+
 
 
 

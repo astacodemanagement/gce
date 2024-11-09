@@ -5,7 +5,6 @@
 <link rel="stylesheet" href="{{ asset('template') }}/plugins/summernote/summernote-bs4.min.css">
 @endpush
 
-
 @section('content')
 <div class="card">
     <!-- /.card-header -->
@@ -15,30 +14,37 @@
             <thead>
                 <tr>
                     <th width="5%">No</th>
-                    <th>Nama Dokumentasi</th>
+                    <th>Nama Halaman Statis</th>
                     <th>Deskripsi</th>
+                    <th>Link</th>
+                    <th>Salin Link</th>
                     <th width="5%">Gambar</th>
                     <th width="15%">Aksi</th>
                 </tr>
             </thead>
             <tbody>
                 @php $i = 1; @endphp
-                @foreach ($dokumentasi as $p)
+                @foreach ($halaman_statis as $p)
                 <tr>
                     <td>{{ $i }}</td>
-                    <td>{{ $p->nama_dokumentasi }}</td>
+                    <td>{{ $p->nama_halaman_statis }}</td>
                     <td>{!! \Illuminate\Support\Str::limit(strip_tags($p->deskripsi), 20, '...') !!}</td>
                     <td>
-                        <a href="/upload/dokumentasi/{{ $p->gambar }}" target="_blank">
-                            <img style="max-width:100px; max-height:100px"
-                                src="/upload/dokumentasi/{{ $p->gambar }}" alt="">
+                        <a href="{{ $p->link }}" target="_blank" id="link-{{ $p->id }}">{{ $p->link }}</a>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="copyToClipboard('link-{{ $p->id }}')">Salin Link</button>
+                    </td>
+                    <td>
+                        <a href="/upload/halaman_statis/{{ $p->gambar }}" target="_blank">
+                            <img style="max-width:100px; max-height:100px" src="/upload/halaman_statis/{{ $p->gambar }}" alt="">
                         </a>
                     </td>
                     <td>
-                        <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
+                        <a href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}">
                             <i class="fas fa-edit"></i> Edit
                         </a>
-                        <button class="btn btn-sm btn-danger btn-hapus" data-id="{{ $p->id }}" style="color: white">
+                        <button class="btn btn-sm btn-danger btn-hapus" data-id="{{ $p->id }}">
                             <i class="fas fa-trash-alt"></i> Delete
                         </button>
                     </td>
@@ -46,8 +52,30 @@
                 @php $i++; @endphp
                 @endforeach
             </tbody>
-
         </table>
+
+        <script>
+            function copyToClipboard(elementId) {
+                // Ambil elemen link berdasarkan id
+                var linkElement = document.getElementById(elementId);
+
+                // Buat elemen teks sementara untuk menyimpan link
+                var tempInput = document.createElement("input");
+                tempInput.value = linkElement.href;
+                document.body.appendChild(tempInput);
+
+                // Salin link ke clipboard
+                tempInput.select();
+                document.execCommand("copy");
+
+                // Hapus elemen teks sementara
+                document.body.removeChild(tempInput);
+
+                // Tampilkan notifikasi sukses
+                alert("Link berhasil disalin!");
+            }
+        </script>
+
     </div>
     <!-- /.card-body -->
 </div>
@@ -70,33 +98,40 @@
                     </div>
                     <!-- /.card-header -->
                     <!-- form start -->
-                    <form id="form-tambah" action="{{ route('dokumentasi.store') }}" method="POST" enctype="multipart/form-data">
+                    <form id="form-tambah" action="{{ route('halaman_statis.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf <!-- Tambahkan token CSRF -->
                         <div class="card-body">
 
                             <div class="col-lg-12">
                                 <div class="mb-4">
-                                    <label for="nama_dokumentasi" class="form-label fw-semibold">Nama Dokumentasi</label>
-                                    <span class="text-danger">*</span> <!-- Menambahkan span untuk keterangan -->
-                                    <input type="text" class="form-control" id="nama_dokumentasi" name="nama_dokumentasi"
-                                        placeholder="Ex : Nama" required>
+                                    <label for="nama_halaman_statis" class="form-label fw-semibold">Nama Halaman Statis</label>
+                                    <span class="text-danger">*</span>
+                                    <input type="text" class="form-control" id="nama_halaman_statis" name="nama_halaman_statis"
+                                        placeholder="Ex : Nama" required oninput="generateSlug()">
                                 </div>
                             </div>
                             <div class="col-lg-12">
                                 <div class="mb-4">
-                                    <label for="link" class="form-label fw-semibold">Link</label>
-                                    <input type="text" class="form-control" id="link" name="link"
-                                        placeholder="Ex : https://...">
+                                    <label for="slug" class="form-label fw-semibold">Slug</label>
+                                    <input type="text" class="form-control" id="slug" name="slug"
+                                        placeholder="Ex : halaman-statis" readonly>
                                 </div>
                             </div>
-                            <div class="col-lg-12">
-                                <div class="mb-4">
-                                    <label for="urutan" class="form-label fw-semibold">Urutan</label>
 
-                                    <input type="number" class="form-control" id="urutan" name="urutan"
-                                        placeholder="Ex : 1">
-                                </div>
-                            </div>
+                            <script>
+                                function generateSlug() {
+                                    const namaHalaman = document.getElementById('nama_halaman_statis').value;
+                                    const slug = namaHalaman
+                                        .toLowerCase() // Mengubah ke huruf kecil
+                                        .trim() // Menghapus spasi di awal dan akhir
+                                        .replace(/[^a-z0-9\s-]/g, '') // Menghapus karakter yang bukan huruf, angka, atau spasi
+                                        .replace(/\s+/g, '-') // Mengganti spasi dengan tanda hubung
+                                        .replace(/-+/g, '-'); // Menghapus tanda hubung ganda
+                                    document.getElementById('slug').value = slug; // Mengisi nilai slug
+                                }
+                            </script>
+
+
 
                             <div class="col-12">
                                 <div class="mb-4">
@@ -174,7 +209,7 @@
 </div>
 
 <div class="modal fade" id="modal-edit">
-    <div class="modal-dialog  modal-xl">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Form Edit {{ $subtitle }}</h4>
@@ -197,16 +232,12 @@
                         <div class="card-body">
                             <!-- Tambahkan field input yang sesuai di sini -->
                             <div class="form-group">
-                                <label for="nama_dokumentasi_edit">Nama Dokumentasi</label>
-                                <input type="text" class="form-control" id="nama_dokumentasi_edit" name="nama_dokumentasi" required>
+                                <label for="nama_halaman_statis_edit">Nama Halaman Statis</label>
+                                <input type="text" class="form-control" id="nama_halaman_statis_edit" name="nama_halaman_statis" required>
                             </div>
                             <div class="form-group">
-                                <label for="link_edit">Link</label>
-                                <input type="text" class="form-control" id="link_edit" name="link" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="urutan_edit">Urutan</label>
-                                <input type="text" class="form-control" id="urutan_edit" name="urutan" required>
+                                <label for="slug_edit">Slug</label>
+                                <input type="text" class="form-control" id="slug_edit" name="slug" required>
                             </div>
                             <div class="form-group">
                                 <label for="deskripsi_edit">Deskripsi</label>
@@ -284,6 +315,9 @@
 @push('script')
 {{-- SKRIP TAMBAHAN --}}
 
+
+
+
 {{-- Summernote --}}
 <script>
     $(function() {
@@ -325,7 +359,7 @@
             tombolSimpan.prop('disabled', true).text('Menyimpan...');
 
             $.ajax({
-                url: '{{ route('dokumentasi.store') }}',
+                url: '{{ route('halaman_statis.store') }}',
                 type: 'POST',
                 data: formData,
                 processData: false, // Menghindari jQuery memproses data
@@ -397,14 +431,13 @@
 
             $.ajax({
                 method: 'GET',
-                url: '{{ route("dokumentasi.edit", ":id") }}'.replace(':id', id), // Memperbaiki penempatan tanda kutip
+                url: '{{ route("halaman_statis.edit", ":id") }}'.replace(':id', id), // Memperbaiki penempatan tanda kutip
                 success: function(data) {
                     console.log(data); // Cek data yang diterima dari server
                     // Mengisi data pada form modal
                     $('.id').val(data.id);
-                    $('#nama_dokumentasi_edit').val(data.nama_dokumentasi);
-                    $('#link_edit').val(data.link);
-                    $('#urutan_edit').val(data.urutan);
+                    $('#nama_halaman_statis_edit').val(data.nama_halaman_statis);
+                    $('#slug_edit').val(data.slug);
                     $('#deskripsi_edit').summernote('code', data.deskripsi);
                     $('#modal-edit').modal('show');
                 },
@@ -438,7 +471,7 @@
 
             $.ajax({
                 type: 'POST', // Gunakan POST karena kita override dengan PUT
-                url: '/dokumentasi/' + id,
+                url: '/halaman_statis/' + id,
                 data: formData,
                 // headers: {
                 //     'X-HTTP-Method-Override': 'PUT'
@@ -524,7 +557,7 @@
                 if (result.isConfirmed) {
                     // Lakukan permintaan AJAX ke endpoint penghapusan
                     $.ajax({
-                        url: '{{ route("dokumentasi.destroy", ":id") }}'.replace(':id', id), // Memperbaiki penempatan tanda kutip
+                        url: '{{ route("halaman_statis.destroy", ":id") }}'.replace(':id', id), // Memperbaiki penempatan tanda kutip
                         type: 'DELETE',
                         data: {
                             "_token": "{{ csrf_token() }}",

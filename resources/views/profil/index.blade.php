@@ -1,6 +1,10 @@
 @extends('layouts.app')
 @section('title','Halaman Profil')
 @section('subtitle','Menu Profil')
+@push('css')
+<link rel="stylesheet" href="{{ asset('template') }}/plugins/summernote/summernote-bs4.min.css">
+@endpush
+
 
 @section('content')
 
@@ -187,7 +191,7 @@
                       </div>
 
                       <div class="row">
-                        <div class="col-md-4 col-sm-4 col-12">
+                        <div class="col-md-12 col-sm-12 col-12">
                           <!-- Kolom untuk input kode resi dan nama konsumen -->
                           <div class="form-group">
                             <label for="deskripsi_utama_edit">Deskripsi Utama</label>
@@ -195,14 +199,14 @@
                           </div>
                         </div>
 
-                        <div class="col-md-4 col-sm-4 col-12">
+                        <div class="col-md-12 col-sm-12 col-12">
                           <div class="form-group">
                             <label for="deskripsi_2_edit">Deskripsi Ke-2</label>
                             <textarea id="deskripsi_2_edit" name="deskripsi_2" class="form-control" cols="30" rows="2"></textarea>
                           </div>
                         </div>
 
-                        <div class="col-md-4 col-sm-4 col-12">
+                        <div class="col-md-12 col-sm-12 col-12">
                           <div class="form-group">
                             <label for="deskripsi_3_edit">Deskripsi Ke-3</label>
                             <textarea id="deskripsi_3_edit" name="deskripsi_3" class="form-control" cols="30" rows="2"></textarea>
@@ -513,19 +517,39 @@
                             <textarea id="map_edit" name="map" class="form-control" cols="30" rows="2"></textarea>
                           </div>
                         </div>
+                        <div class="row">
+                          <div class="col-md-12 col-sm-12 col-12">
+                            <!-- Kolom untuk input kode resi dan nama konsumen -->
+                            <div class="form-group">
+                              <label for="map_edit">Default Profil</label>
 
+
+
+                              <select class="form-control" name="default_profil" id="default_profil_edit">
+                                <option value="">--Default Profil--</option>
+                                <option value="Poto" {{ old('default_profil') == 'Poto' ? 'selected' : '' }}>
+                                  Poto
+                                </option>
+                                <option value="Video"
+                                  {{ old('default_profil') == 'Video' ? 'selected' : '' }}>
+                                  Video
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+
+
+                        </div>
 
                       </div>
 
                     </div>
-
+                  </div>
+                  <div class="card-footer">
+                    <button type="button" class="btn btn-primary" id="btn-save-edit"><i class="fas fa-check"></i> Update</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"><span aria-hidden="true">&times;</span> Close</button>
                   </div>
                 </div>
-                <div class="card-footer">
-                  <button type="button" class="btn btn-primary" id="btn-save-edit"><i class="fas fa-check"></i> Update</button>
-                  <button type="button" class="btn btn-danger" data-dismiss="modal"><span aria-hidden="true">&times;</span> Close</button>
-                </div>
-              </div>
             </form>
           </div>
         </div>
@@ -555,6 +579,46 @@
 
 
 
+<script>
+  $(function() {
+    $('#deskripsi_utama_edit').summernote({
+      height: 200,
+      callbacks: {
+        onInit: function() {
+          $('#deskripsi_utama_edit').summernote('code', data.deskripsi_utama_edit);
+        }
+      }
+    });
+  });
+</script>
+
+
+<script>
+  $(function() {
+    $('#deskripsi_2_edit').summernote({
+      height: 200,
+      callbacks: {
+        onInit: function() {
+          $('#deskripsi_2_edit').summernote('code', data.deskripsi_2_edit);
+        }
+      }
+    });
+  });
+</script>
+
+
+<script>
+  $(function() {
+    $('#deskripsi_3_edit').summernote({
+      height: 200,
+      callbacks: {
+        onInit: function() {
+          $('#deskripsi_3_edit').summernote('code', data.deskripsi_3_edit);
+        }
+      }
+    });
+  });
+</script>
 
 
 
@@ -597,9 +661,11 @@
           $('#linkedin_edit').val(data.linkedin);
           $('#website_edit').val(data.website);
           $('#youtube_edit').val(data.youtube);
-          $('#deskripsi_utama_edit').val(data.deskripsi_utama);
-          $('#deskripsi_2_edit').val(data.deskripsi_2);
-          $('#deskripsi_3_edit').val(data.deskripsi_3);
+          $('#default_profil_edit').val(data.default_profil);
+          $('#deskripsi_utama_edit').summernote('code', data.deskripsi_utama);
+          $('#deskripsi_2_edit').summernote('code', data.deskripsi_2);
+          $('#deskripsi_3_edit').summernote('code', data.deskripsi_3);
+
           $('#map_edit').val(data.map);
           // Menampilkan modal
           $('#modal-profil-edit').modal('show');

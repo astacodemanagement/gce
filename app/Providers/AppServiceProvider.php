@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Chat;
 use App\Models\Profil;
 use App\Models\User;
 use Illuminate\Support\Facades\View;
@@ -35,5 +36,8 @@ class AppServiceProvider extends ServiceProvider
          // Share the count of non-active users with all views
          $nonActiveUserCount = User::where('status', 'Non Aktif')->count();
          View::share('nonActiveUserCount', $nonActiveUserCount);
+           // Share the count of unread messages with all views
+        $unreadMessagesCount = Chat::where('is_read', 'Belum Dibaca')->count();
+        View::share('unreadMessagesCount', $unreadMessagesCount);
     }
 }

@@ -4,7 +4,12 @@
 
 
 @push('css')
-
+<style>
+    #termsModal {
+        transform: translateY(1000px);
+        padding-top: 100px;
+    }
+</style>
 @endpush
 
 
@@ -33,7 +38,7 @@
         <div class="request-services-one__top">
             <div class="sec-title">
                 <div class="sub-title">
-                    <h5><span class="icon-right-arrow-1"></span> Jika sudah punya akun, bisa <a href="/login" style="color: white;">klik login disini!</a></h5>
+                    <h5><span class="icon-right-arrow-1"></span> Jika sudah punya akun, bisa <a href="/login_pengguna" style="color: white;">klik login disini!</a></h5>
                 </div>
                 <h2>Mari Bergabung Bersama Kami</h2>
             </div>
@@ -47,9 +52,10 @@
                     <div class="request-services-one__single-tab">
                         @if (session('success'))
                         <div class="alert alert-success">
-                            {{ session('success') }}
+                            {!! session('success') !!}
                         </div>
                         @endif
+
 
                         <form action="{{ route('pendaftaran.submit_pendaftaran') }}" method="POST" id="" class="default-form2 contact-form-validated request-services-one__form" novalidate="novalidate">
                             @csrf
@@ -170,7 +176,7 @@
                                     <div class="col-xl-12 col-lg-12 col-md-12">
                                         <div class="input-box">
                                             <label>Password</label>
-                                            <input type="text" id="password" placeholder="Password" name="password" class="password-input" oninput="maskPassword(this)">
+                                            <input type="password" id="password" placeholder="Password" name="password" class="form-control">
                                             @error('password')
                                             <div class="text-danger">{{ $message }}</div>
                                             @enderror
@@ -180,7 +186,7 @@
                                     <div class="col-xl-12 col-lg-12 col-md-12">
                                         <div class="input-box">
                                             <label>Konfirmasi Password</label>
-                                            <input type="text" id="confirmation_password" placeholder="Ulangi Password" name="password_confirmation" class="password-input" oninput="maskPassword(this)">
+                                            <input type="password" id="confirmation_password" placeholder="Ulangi Password" name="password_confirmation" class="form-control">
                                             @error('password_confirmation')
                                             <div class="text-danger">{{ $message }}</div>
                                             @enderror
@@ -189,41 +195,32 @@
                                     </div>
 
                                     <script>
-                                        function maskPassword(input) {
-                                            const originalValue = input.value; // ambil nilai asli
-                                            const maskedValue = originalValue.replace(/./g, '•'); // ganti semua karakter dengan titik (•)
-                                            input.setAttribute('data-value', originalValue); // simpan nilai asli di atribut data
-                                            input.value = maskedValue; // set nilai yang dimask
-                                            checkPasswordMatch(); // Panggil fungsi untuk memeriksa kecocokan password setiap kali ada perubahan
-                                        }
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            const passwordInput = document.getElementById('password');
+                                            const confirmationInput = document.getElementById('confirmation_password');
+                                            const matchMessage = document.getElementById('password_match_message');
 
-                                        // Menangkap input saat diklik dan mengembalikan nilai asli
-                                        document.querySelectorAll('.password-input').forEach(input => {
-                                            input.addEventListener('focus', function() {
-                                                this.value = this.getAttribute('data-value') || ''; // mengembalikan nilai asli saat fokus
-                                            });
-                                        });
-
-                                        // Fungsi untuk memeriksa kecocokan password
-                                        function checkPasswordMatch() {
-                                            var password = document.getElementById('password').getAttribute('data-value') || ''; // ambil nilai asli dari password
-                                            var confirmationPassword = document.getElementById('confirmation_password').getAttribute('data-value') || ''; // ambil nilai asli dari konfirmasi password
-                                            var passwordMatchMessage = document.getElementById('password_match_message');
-
-                                            // Periksa apakah password dan konfirmasi password sama
-                                            if (password !== confirmationPassword) {
-                                                passwordMatchMessage.textContent = 'Password belum sama.';
-                                                passwordMatchMessage.style.color = 'red';
-                                            } else {
-                                                passwordMatchMessage.textContent = 'Password sudah sama.';
-                                                passwordMatchMessage.style.color = 'green';
+                                            function checkPasswordMatch() {
+                                                if (passwordInput.value && confirmationInput.value) {
+                                                    if (passwordInput.value === confirmationInput.value) {
+                                                        matchMessage.textContent = 'Password sama';
+                                                        matchMessage.style.color = 'green';
+                                                    } else {
+                                                        matchMessage.textContent = 'Password belum sama';
+                                                        matchMessage.style.color = 'red';
+                                                    }
+                                                } else {
+                                                    matchMessage.textContent = '';
+                                                }
                                             }
-                                        }
 
-                                        // Tambahkan event listener ke input password untuk memeriksa kecocokan setiap kali diketik
-                                        document.getElementById('password').addEventListener('keyup', checkPasswordMatch);
-                                        document.getElementById('confirmation_password').addEventListener('keyup', checkPasswordMatch);
+                                            passwordInput.addEventListener('input', checkPasswordMatch);
+                                            confirmationInput.addEventListener('input', checkPasswordMatch);
+                                        });
                                     </script>
+
+
+
 
                                     <div class="col-xl-12 col-lg-12 col-md-12">
                                         <div class="input-box">
@@ -250,7 +247,8 @@
                                     <div class="input-box">
                                         <label>
                                             <input type="checkbox" id="terms_checkbox" onclick="toggleSubmitButton()">
-                                            Saya setuju dengan <span style="color: #007bff; cursor: pointer;" onclick="openTerms()">syarat dan ketentuan</span>
+                                            Saya setuju dengan
+                                            <span style="color: #007bff; cursor: pointer;" onclick="openTerms()">syarat dan ketentuan</span>
                                         </label>
                                     </div>
                                 </div>
@@ -281,6 +279,29 @@
                             </div>
                         </form>
 
+                        <div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel" aria-hidden="true" data-backdrop="static" style="z-index: 9999;">
+                            <div class="modal-dialog modal-xl" style="margin-top: 7em; padding-bottom:5rem;" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="termsModalLabel">Syarat dan Ketentuan</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Isi syarat dan ketentuan -->
+                                        {!! $profil->deskripsi_2 !!}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <!-- Checkbox untuk menyetujui syarat dan ketentuan -->
+                                        <label>
+                                            <input type="checkbox" id="agreeCheckbox" onclick="toggleCloseButton()"> Setuju dengan syarat & ketentuan
+                                        </label>
+
+                                        <!-- Tombol Tutup -->
+                                        <button type="button" class="btn btn-secondary" id="closeButton" onclick="closeTermsModal()" disabled>OK</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <script>
                             function toggleSubmitButton() {
                                 const checkbox = document.getElementById('terms_checkbox');
@@ -289,10 +310,23 @@
                             }
 
                             function openTerms() {
-                                // Fungsi untuk menampilkan syarat dan ketentuan, misalnya membuka modal
-                                alert('Syarat dan ketentuan akan ditampilkan di sini.'); // Ganti dengan logika untuk membuka modal atau halaman baru
+                                $('#termsModal').modal({
+                                    backdrop: false, // Nonaktifkan backdrop
+                                    keyboard: true // Menentukan apakah modal dapat ditutup dengan tombol ESC
+                                }).modal('show');
+                            }
+
+                            function closeTermsModal() {
+                                $('#termsModal').modal('hide');
+                            }
+
+                            function toggleCloseButton() {
+                                const agreeCheckbox = document.getElementById('agreeCheckbox');
+                                const closeButton = document.getElementById('closeButton');
+                                closeButton.disabled = !agreeCheckbox.checked; // Aktifkan tombol Tutup jika checkbox dicentang
                             }
                         </script>
+
 
                     </div>
                 </div>
