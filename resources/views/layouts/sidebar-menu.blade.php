@@ -64,6 +64,14 @@
                     </p>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="/blokir" class="nav-link {{ Route::is('blokir.*') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-phone"></i>
+                    <p>
+                        Blokir
+                    </p>
+                </a>
+            </li>
         </ul>
     </li>
 

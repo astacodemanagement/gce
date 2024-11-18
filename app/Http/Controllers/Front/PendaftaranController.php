@@ -45,7 +45,13 @@ class PendaftaranController extends Controller
                 'max:15',
                 Rule::unique('konsumen', 'no_telp'),
                 Rule::unique('users', 'no_telp'),
+                function ($attribute, $value, $fail) {
+                    if (\DB::table('blokir')->where('no_wa', $value)->exists()) {
+                        $fail('Nomor telepon ini tidak diperbolehkan untuk didaftarkan.');
+                    }
+                },
             ],
+
             'alamat' => 'required|string|max:500',
             'tanggal_lahir' => 'required|date',
             'kode_referal' => 'nullable|string|max:10',

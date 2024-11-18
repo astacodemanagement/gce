@@ -29,6 +29,7 @@ use App\Http\Controllers\Front\KelebihanController;
 use App\Http\Controllers\Front\DokumentasiController;
 use App\Http\Controllers\Front\KategoriBeritaController;
 use App\Http\Controllers\Front\BeritaController;
+use App\Http\Controllers\Front\BlokirController;
 use App\Http\Controllers\Front\ChatController;
 use App\Http\Controllers\Front\GaleriController;
 use App\Http\Controllers\Front\HalamanStatisController;
@@ -156,6 +157,7 @@ Route::middleware('auth')->group(function () {
             Route::resource('/dokumentasi', DokumentasiController::class);
             Route::resource('/mitra', MitraController::class);
             Route::resource('/faq', FaqController::class);
+            Route::resource('/blokir', BlokirController::class);
             Route::resource('/kelebihan', KelebihanController::class);
             Route::resource('/kelebihan', KelebihanController::class);
             Route::resource('/kategori_berita', KategoriBeritaController::class);
