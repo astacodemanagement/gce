@@ -14,7 +14,7 @@
 
 
 @section('content')
-{!! RecaptchaV3::initJs() !!}
+<!-- {!! RecaptchaV3::initJs() !!} -->
 <!--Start Page Header-->
 <section class="page-header">
     <div class="page-header__bg" style="background-image: url({{ asset('template/front') }}/hero.png)">

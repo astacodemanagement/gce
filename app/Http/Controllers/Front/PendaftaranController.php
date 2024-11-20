@@ -55,7 +55,7 @@ class PendaftaranController extends Controller
             'alamat' => 'required|string|max:500',
             'tanggal_lahir' => 'required|date',
             'kode_referal' => 'nullable|string|max:10',
-            'g-recaptcha-response' => 'required|recaptchav3:register,0.5'
+            // 'g-recaptcha-response' => 'required|recaptchav3:register,0.5'
         ], [
             'nama_lengkap.required' => 'Nama lengkap harus diisi.',
             'kategori_konsumen.required' => 'Kategori konsumen harus diisi.',
@@ -69,7 +69,7 @@ class PendaftaranController extends Controller
             'no_telp.unique' => 'Nomor telepon sudah terdaftar.',
             'alamat.required' => 'Alamat harus diisi.',
             'tanggal_lahir.required' => 'Tanggal lahir harus diisi.',
-            'g-recaptcha-response.required' => 'Anda harus melewati reCAPTCHA.',
+            // 'g-recaptcha-response.required' => 'Anda harus melewati reCAPTCHA.',
         ]);
 
 
