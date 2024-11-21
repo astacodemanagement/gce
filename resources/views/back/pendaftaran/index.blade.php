@@ -223,6 +223,8 @@
                     $('#alamat_edit').val(data.alamat);
                     $('#kode_referal_edit').val(data.kode_referal);
                     $('#email_edit').val(data.user.email);
+                    $('#status_edit').val(data.user.status);
+                    $('#alasan_edit').val(data.user.alasan);
                     $('#modal-edit').modal('show');
                 },
 
