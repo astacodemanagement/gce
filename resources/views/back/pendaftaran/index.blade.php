@@ -129,7 +129,7 @@
                                     </div>
                                 </div>
                             </div>
-                             <div class="row">
+                            <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="kode_referal_edit">Kode Referal</label>
@@ -202,7 +202,6 @@
 {{-- PERINTAH EDIT DATA --}}
 <script>
     $(document).ready(function() {
-
         $('#example1').on('click', '.btn-edit', function(e) {
             e.preventDefault();
             var id = $(this).data('id');
@@ -212,6 +211,7 @@
                 url: '{{ route("data_pendaftaran.edit", ":id") }}'.replace(':id', id),
                 success: function(data) {
                     console.log(data); // Cek data yang diterima dari server
+
                     // Mengisi data pada form modal
                     $('.id').val(data.id);
                     $('#name_edit').val(data.user.name);
@@ -225,18 +225,32 @@
                     $('#email_edit').val(data.user.email);
                     $('#status_edit').val(data.user.status);
                     $('#alasan_edit').val(data.user.alasan);
+
+                    // Cek status untuk menampilkan alasan
+                    if (data.user.status === 'Non Aktif') {
+                        $('#alasan_group').show(); // Tampilkan jika Non Aktif
+                    } else {
+                        $('#alasan_group').hide(); // Sembunyikan jika status lainnya
+                    }
+
+                    // Tampilkan modal edit
                     $('#modal-edit').modal('show');
                 },
-
                 error: function(xhr) {
-                    // Tangani kesalahan jika ada
                     alert('Error: ' + xhr.statusText);
                 }
             });
-
         });
 
-
+        // Tambahkan event listener untuk select status
+        $('#status_edit').on('change', function() {
+            var alasanGroup = $('#alasan_group');
+            if (this.value === 'Non Aktif') {
+                alasanGroup.show(); // Tampilkan alasan jika status diubah ke Non Aktif
+            } else {
+                alasanGroup.hide(); // Sembunyikan alasan jika status lainnya
+            }
+        });
     });
 </script>
 {{-- PERINTAH EDIT DATA --}}
