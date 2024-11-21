@@ -246,13 +246,14 @@
                                 <div class="col-xl-12 col-lg-12 col-md-12">
                                     <div class="input-box">
                                         <label>
-                                            <input type="checkbox" id="terms_checkbox" onclick="toggleSubmitButton()">
+                                            <input type="checkbox" id="terms_checkbox" onclick="toggleSubmitButton()" disabled>
                                             Saya setuju dengan
                                             <span style="color: #007bff; cursor: pointer;" onclick="openTerms()">syarat dan ketentuan</span>
                                         </label>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="row">
                                 <div class="form-group{{ $errors->has('g-recaptcha-response') ? ' has-error' : '' }}">
                                     <div class="col-md-6">
@@ -279,6 +280,7 @@
                             </div>
                         </form>
 
+                        <!-- Modal untuk syarat dan ketentuan -->
                         <div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModalLabel" aria-hidden="true" data-backdrop="static" style="z-index: 9999;">
                             <div class="modal-dialog modal-xl" style="margin-top: 7em; padding-bottom:5rem;" role="document">
                                 <div class="modal-content">
@@ -290,41 +292,57 @@
                                         {!! $profil->deskripsi_2 !!}
                                     </div>
                                     <div class="modal-footer">
-                                        <!-- Checkbox untuk menyetujui syarat dan ketentuan -->
+                                        <!-- Checkbox dalam modal -->
                                         <label>
                                             <input type="checkbox" id="agreeCheckbox" onclick="toggleCloseButton()"> Setuju dengan syarat & ketentuan
                                         </label>
 
-                                        <!-- Tombol Tutup -->
+                                        <!-- Tombol OK -->
                                         <button type="button" class="btn btn-secondary" id="closeButton" onclick="closeTermsModal()" disabled>OK</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Script -->
                         <script>
+                            // Mengaktifkan tombol submit jika ada perubahan apapun pada checkbox
                             function toggleSubmitButton() {
                                 const checkbox = document.getElementById('terms_checkbox');
                                 const submitButton = document.getElementById('submit_button');
                                 submitButton.disabled = !checkbox.checked; // Aktifkan tombol jika checkbox dicentang
                             }
 
+                            // Tampilkan modal syarat dan ketentuan
                             function openTerms() {
+                                const agreeCheckbox = document.getElementById('agreeCheckbox');
+                                const closeButton = document.getElementById('closeButton');
+
+                                // Tampilkan modal
                                 $('#termsModal').modal({
                                     backdrop: false, // Nonaktifkan backdrop
-                                    keyboard: true // Menentukan apakah modal dapat ditutup dengan tombol ESC
+                                    keyboard: true // Izinkan menutup dengan ESC
                                 }).modal('show');
                             }
 
+                            // Menutup modal dan memperbarui checkbox utama
                             function closeTermsModal() {
                                 $('#termsModal').modal('hide');
+                                const termsCheckbox = document.getElementById('terms_checkbox');
+                                termsCheckbox.disabled = false;
+                                termsCheckbox.checked = true; // Centang checkbox utama
+                                toggleSubmitButton(); // Perbarui status tombol submit
                             }
 
+                            // Aktifkan tombol OK dalam modal
                             function toggleCloseButton() {
                                 const agreeCheckbox = document.getElementById('agreeCheckbox');
                                 const closeButton = document.getElementById('closeButton');
-                                closeButton.disabled = !agreeCheckbox.checked; // Aktifkan tombol Tutup jika checkbox dicentang
+                                closeButton.disabled = !agreeCheckbox.checked;
                             }
+
+                            // Deteksi perubahan pada checkbox secara dinamis
+                            document.getElementById('terms_checkbox').addEventListener('change', toggleSubmitButton);
                         </script>
 
 

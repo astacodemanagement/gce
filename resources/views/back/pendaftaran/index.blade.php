@@ -88,9 +88,14 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="jenis_kelamin_edit">Jenis Kelamin</label>
-                                        <input type="text" class="form-control" id="jenis_kelamin_edit" name="jenis_kelamin" required>
+                                        <select class="form-control" id="jenis_kelamin_edit" name="jenis_kelamin" required>
+                                            <option value="">-- Pilih Jenis Kelamin --</option>
+                                            <option value="Pria">Pria</option>
+                                            <option value="Wanita">Wanita</option>
+                                        </select>
                                     </div>
                                 </div>
+
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="tanggal_lahir_edit">Tanggal Lahir</label>
@@ -104,9 +109,15 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="kategori_konsumen_edit">Kategori Konsumen</label>
-                                        <input type="text" class="form-control" id="kategori_konsumen_edit" name="kategori_konsumen" required>
+                                        <select class="form-control" id="kategori_konsumen_edit" name="kategori_konsumen" required>
+                                            <option value="">-- Pilih Kategori Konsumen --</option>
+                                            <option value="personal">Personal</option>
+                                            <option value="corporate">Corporate</option>
+                                            <option value="corporate_expedisi">Corporate Expedisi</option>
+                                        </select>
                                     </div>
                                 </div>
+
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="no_telp_edit">No Telp</label>

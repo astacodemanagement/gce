@@ -31,7 +31,8 @@ class PendaftaranController extends Controller
 
     public function submit_pendaftaran(Request $request)
     {
-
+        $tanggalSekarang = now();
+    
         $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'kategori_konsumen' => 'required|string',
@@ -39,6 +40,18 @@ class PendaftaranController extends Controller
             'jenis_kelamin' => 'required|string|in:Pria,Wanita',
             'email' => 'required|email|unique:users,email|max:255',
             'password' => 'required|min:8|confirmed',
+            'tanggal_lahir' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) use ($tanggalSekarang) {
+                    $tanggalLahir = \Carbon\Carbon::parse($value);
+                    $umur = $tanggalSekarang->diffInYears($tanggalLahir);
+    
+                    if ($umur < 15) {
+                        $fail('Minimal usia untuk pendaftaran adalah 15 tahun.');
+                    }
+                },
+            ],
             'no_telp' => [
                 'required',
                 'string',
@@ -51,11 +64,8 @@ class PendaftaranController extends Controller
                     }
                 },
             ],
-
             'alamat' => 'required|string|max:500',
-            'tanggal_lahir' => 'required|date',
             'kode_referal' => 'nullable|string|max:10',
-            // 'g-recaptcha-response' => 'required|recaptchav3:register,0.5'
         ], [
             'nama_lengkap.required' => 'Nama lengkap harus diisi.',
             'kategori_konsumen.required' => 'Kategori konsumen harus diisi.',
@@ -69,10 +79,9 @@ class PendaftaranController extends Controller
             'no_telp.unique' => 'Nomor telepon sudah terdaftar.',
             'alamat.required' => 'Alamat harus diisi.',
             'tanggal_lahir.required' => 'Tanggal lahir harus diisi.',
-            // 'g-recaptcha-response.required' => 'Anda harus melewati reCAPTCHA.',
+            'tanggal_lahir.date' => 'Format tanggal lahir tidak valid.',
         ]);
-
-
+    
         $sanitizedInput = [
             'nama_lengkap' => htmlspecialchars(strip_tags($request->nama_lengkap)),
             'kategori_konsumen' => htmlspecialchars(strip_tags($request->kategori_konsumen)),
@@ -84,14 +93,14 @@ class PendaftaranController extends Controller
             'tanggal_lahir' => $request->tanggal_lahir,
             'kode_referal' => htmlspecialchars(strip_tags($request->kode_referal)),
         ];
-
+    
         $user = User::create([
             'email' => $sanitizedInput['email'],
             'status' => 'Non Aktif',
             'name' => $sanitizedInput['nama_lengkap'],
             'password' => Hash::make($request->password),
         ]);
-
+    
         Konsumen::create([
             'user_id' => $user->id,
             'kategori_konsumen' => $sanitizedInput['kategori_konsumen'],
@@ -103,7 +112,7 @@ class PendaftaranController extends Controller
             'kode_referal' => $sanitizedInput['kode_referal'],
             'jenis_konsumen' => 'FLP',
         ]);
-
+    
         // Assign role ke pengguna
         $role = Role::find(6);
         if ($role) {
@@ -111,12 +120,13 @@ class PendaftaranController extends Controller
         } else {
             return response(['success' => false, 'message' => 'Role tidak ditemukan'], 404);
         }
-
+    
         $profil = Profil::first();
         $no_wa = $profil ? $profil->no_wa : 'Tertera';
-
+    
         return redirect()->back()->with('success', 'Data Pendaftaran berhasil dikirimkan! Informasi selanjutnya bisa <a href="https://wa.me/' . $no_wa . '" target="_blank">Klik Link WhatsApp Ini</a>');
     }
+    
 
 
 

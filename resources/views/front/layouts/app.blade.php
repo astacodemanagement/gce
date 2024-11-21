@@ -341,7 +341,7 @@
 
                         <!-- Mobile Menu  -->
                         <div class="mobile-menu" style="background-color: black;">
-                            <nav class="menu-box">
+                            <nav class="menu-box" style="background-color: #FFD550;">
                                 <div class="close-btn"><i class="fas fa-times"></i></div>
                                 {{-- <div class="nav-logo">
                                         <a href="/">
