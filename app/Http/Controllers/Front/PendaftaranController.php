@@ -147,7 +147,7 @@ class PendaftaranController extends Controller
                 'status' => 'required|in:Aktif,Non Aktif',
                 'name' => 'required|string|max:255', // Pastikan 'name' ada
                 'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'alasan_reject' => 'nullable|required_if:status,Non Aktif|max:255',
+                'alasan' => 'nullable|required_if:status,Non Aktif|max:255',
             ]);
 
             // Ambil data konsumen yang akan diupdate berdasarkan ID konsumen
