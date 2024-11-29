@@ -157,7 +157,7 @@
                                 <!-- Status Verifikasi dengan Select (Combo Box) -->
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="status_edit">Status Verifikasi</label>
+                                        <label for="status_edit">Status Verifikasi (Untuk catatan verifikasi bisa melauli Fitur Chat)</label>
                                         <select class="form-control" id="status_edit" name="status" required>
                                             <option value="Aktif">Aktif - Approve</option>
                                             <option value="Non Aktif">Non Aktif - Reject</option>
@@ -166,12 +166,12 @@
                                 </div>
 
                                 <!-- Catatan Alasan (Hidden by default) -->
-                                <div class="col-md-12" id="alasan_group" style="display: none;">
+                                <!-- <div class="col-md-12" id="alasan_group" style="display: none;">
                                     <div class="form-group">
                                         <label for="alasan_edit">Catatan Alasan</label>
                                         <textarea class="form-control" id="alasan_edit" name="alasan"></textarea>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
 

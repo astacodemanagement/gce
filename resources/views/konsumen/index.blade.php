@@ -49,10 +49,11 @@
                                 <?php endif; ?>
                             </td>
                             
-                            <td>{{ $p->nama_konsumen }}</td>
-                            <td>{{ $p->nama_perusahaan }}</td>
+                            <td>{{ $p->user->name }}</td>
+                            <td>{{ $p->nama_perusahaan ?? 'Tidak ada Data' }}</td>
+
                             <td>{{ $p->no_telp }}</td>
-                            <td>{{ $p->email }}</td>
+                            <td>{{ $p->user->email }}</td>
                             <td>{{ $p->alamat }}</td>
                             @hasrole('superadmin')
                                 <td>{{ $p->cabang?->nama_cabang }}</td>

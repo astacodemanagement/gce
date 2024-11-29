@@ -75,6 +75,8 @@ Route::post('/login_pengguna', [LoginController::class, 'proses_login_pengguna']
 Route::middleware(['auth.pengguna', 'role:pengguna'])->group(function () {
     Route::resource('/area', KlienAreaController::class)->middleware('role:pengguna');
     Route::post('/chatting/send', [KlienAreaController::class, 'sendMessage'])->name('chatting.send');
+    Route::post('/area/update', [KlienAreaController::class, 'updateKonsumen'])->name('area.updateKonsumen');
+
 });
 
 Route::middleware('auth')->group(function () {

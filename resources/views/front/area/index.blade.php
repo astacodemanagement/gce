@@ -57,11 +57,11 @@
                                     <span>Chat</span>
                                 </li>
 
-                                <li data-tab="#info" class="tab-btn {{ (Auth::check() && Auth::user()->status === 'Aktif') ? 'active-btn' : '' }}">
+                                <li data-tab="#info" class="tab-btn ">
                                     <span>Informasi</span>
                                 </li>
 
-                                <li data-tab="#profil" class="tab-btn"><span>Profil</span></li>
+                                <li data-tab="#profil" class="tab-btn {{ (Auth::check() && Auth::user()->status === 'Aktif') ? 'active-btn' : '' }}"><span>Profil</span></li>
                                 @if (Auth::check() && Auth::user()->status === 'Aktif')
                                 <li data-tab="#track" class="tab-btn"><span>Order Saya</span></li>
                                 <li data-tab="#track" class="tab-btn"><span>Pembayaran</span></li>
@@ -111,7 +111,7 @@
 
 
 
-                                <div class="tab {{ (Auth::check() && Auth::user()->status === 'Aktif') ? 'active-tab' : '' }}" id="info">
+                                <div class="tab" id="info">
 
                                     <div class="request-services-one__single-tab">
 
@@ -151,11 +151,27 @@
                                 <!--End Single Tab-->
 
                                 <!--Start Single Tab-->
-                                <div class="tab" id="profil">
+                                <div class="tab {{ (Auth::check() && Auth::user()->status === 'Aktif') ? 'active-tab' : '' }}" id="profil">
                                     <div class="request-services-one__single-tab" style="text-align: left;">
+                                        @if (session('success'))
+                                        <div class="alert alert-success">{{ session('success') }}</div>
+                                        @endif
+
+                                        @if ($errors->any())
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                                @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                        @endif
+
                                         <form id="contact-form2"
                                             class="default-form2 contact-form-validated request-services-one__form"
-                                            action="assets/inc/sendemail.php" novalidate="novalidate">
+                                            action="{{ route('area.updateKonsumen') }}" method="POST" novalidate="novalidate">
+                                            @csrf
+
 
                                             <div class="request-services-one__form-top">
                                                 <div class="title-box">
@@ -166,7 +182,7 @@
                                                     <div class="col-xl-6 col-lg-6 col-md-6">
                                                         <div class="input-box">
                                                             <label>Nama Lengkap</label>
-                                                            <input type="text" name="name" id="name" value="{{ $user->name }}" placeholder="Nama Lengkap" readonly>
+                                                            <input type="text" name="name" id="name" value="{{ $user->name }}" placeholder="Nama Lengkap">
                                                         </div>
                                                     </div>
 
@@ -201,6 +217,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
+
                                             </div>
 
                                             <div class="request-services-one__form-bottom">
@@ -221,15 +239,20 @@
                                                     </div>
                                                 </div>
 
+
+
                                                 <!-- Nama Perusahaan -->
                                                 <div class="row">
+                                                    @if($konsumen->kategori_konsumen != 'personal')
                                                     <div class="col-xl-12 col-lg-12 col-md-12">
                                                         <div class="input-box">
                                                             <label>Nama Perusahaan</label>
                                                             <input type="text" name="nama_perusahaan" id="nama_perusahaan" value="{{ $konsumen->nama_perusahaan ?? '' }}" placeholder="Nama Perusahaan">
                                                         </div>
                                                     </div>
+                                                    @endif
                                                 </div>
+
 
                                                 <!-- Kode Referal -->
                                                 <div class="row">
@@ -250,69 +273,35 @@
                                                 <!-- Data Akun -->
                                                 <br>
                                                 <div class="row">
-                                                    <div class="col-xl-4 col-lg-4 col-md-4">
+                                                    <div class="col-xl-6 col-lg-6 col-md-6">
                                                         <div class="input-box">
                                                             <label>Email</label>
-                                                            <input type="text" name="email" id="email" value="{{ $user->email }}" placeholder="Email" readonly>
+                                                            <input type="text" name="email" id="email" value="{{ $user->email }}" placeholder="Email">
                                                         </div>
                                                     </div>
-                                                    <div class="col-xl-4 col-lg-4 col-md-4">
+                                                    <div class="col-xl-6 col-lg-6 col-md-6">
                                                         <div class="input-box">
                                                             <label>Password</label>
-                                                            <input type="text" id="password" placeholder="Password" name="password" class="password-input" oninput="maskPassword(this)">
+                                                            <div class="password-wrapper">
+                                                                <input
+                                                                    type="text"
+                                                                    id="password"
+                                                                    name="password"
+                                                                    placeholder="Password"
+                                                                    class="password-input"
+                                                                    oninput="">
+
+                                                            </div>
                                                             @error('password')
                                                             <div class="text-danger">{{ $message }}</div>
                                                             @enderror
                                                         </div>
                                                     </div>
-                                                    <div class="col-xl-4 col-lg-4 col-md-4">
-                                                        <div class="input-box">
-                                                            <label>Konfirmasi Password</label>
-                                                            <input type="text" id="confirmation_password" placeholder="Ulangi Password" name="password_confirmation" class="password-input" oninput="maskPassword(this)">
-                                                            @error('password_confirmation')
-                                                            <div class="text-danger">{{ $message }}</div>
-                                                            @enderror
-                                                            <div id="password_match_message" style="margin-top: 5px;"></div>
-                                                        </div>
-                                                    </div>
 
-                                                    <script>
-                                                        function maskPassword(input) {
-                                                            const originalValue = input.value; // ambil nilai asli
-                                                            const maskedValue = originalValue.replace(/./g, '•'); // ganti semua karakter dengan titik (•)
-                                                            input.setAttribute('data-value', originalValue); // simpan nilai asli di atribut data
-                                                            input.value = maskedValue; // set nilai yang dimask
-                                                            checkPasswordMatch(); // Panggil fungsi untuk memeriksa kecocokan password setiap kali ada perubahan
-                                                        }
-
-                                                        // Menangkap input saat diklik dan mengembalikan nilai asli
-                                                        document.querySelectorAll('.password-input').forEach(input => {
-                                                            input.addEventListener('focus', function() {
-                                                                this.value = this.getAttribute('data-value') || ''; // mengembalikan nilai asli saat fokus
-                                                            });
-                                                        });
-
-                                                        // Fungsi untuk memeriksa kecocokan password
-                                                        function checkPasswordMatch() {
-                                                            var password = document.getElementById('password').getAttribute('data-value') || ''; // ambil nilai asli dari password
-                                                            var confirmationPassword = document.getElementById('confirmation_password').getAttribute('data-value') || ''; // ambil nilai asli dari konfirmasi password
-                                                            var passwordMatchMessage = document.getElementById('password_match_message');
-
-                                                            // Periksa apakah password dan konfirmasi password sama
-                                                            if (password !== confirmationPassword) {
-                                                                passwordMatchMessage.textContent = 'Password belum sama.';
-                                                                passwordMatchMessage.style.color = 'red';
-                                                            } else {
-                                                                passwordMatchMessage.textContent = 'Password sudah sama.';
-                                                                passwordMatchMessage.style.color = 'green';
-                                                            }
-                                                        }
-
-                                                        // Tambahkan event listener ke input password untuk memeriksa kecocokan setiap kali diketik
-                                                        document.getElementById('password').addEventListener('keyup', checkPasswordMatch);
-                                                        document.getElementById('confirmation_password').addEventListener('keyup', checkPasswordMatch);
-                                                    </script>
                                                 </div>
+
+
+
                                             </div>
 
                                             <!-- Tombol Submit -->
