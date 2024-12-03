@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller; // Tambahkan baris ini
 use App\Models\Chat;
 use App\Models\Informasi;
 use App\Models\Konsumen;
+use App\Models\Transaksi;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +35,6 @@ class KlienAreaController extends Controller
             ->where('is_read', false) // Hanya ubah jika belum dibaca
             ->update(['is_read' => true]);
 
-        $konsumen = Konsumen::where('user_id', $user->id)->first();
 
         // Menentukan admin berdasarkan pesan pertama yang ada
         $admin = null;
@@ -42,8 +42,78 @@ class KlienAreaController extends Controller
             $admin = User::find($messages->first()->sender_id); // Mengambil admin berdasarkan sender_id dari pesan pertama
         }
 
-        return view('front.area.index', compact('title', 'subtitle', 'user', 'konsumen', 'messages', 'admin', 'informasi'));
+        $konsumen = Konsumen::where('user_id', $user->id)->first();
+
+        $transaction_proses_packing = Transaksi::where('konsumen_id', $konsumen->id)
+            ->where('status_pengiriman', 'Proses Packing')
+            ->get();
+
+        $transaction_proses_pengiriman = Transaksi::where('konsumen_id', $konsumen->id)
+            ->where('status_pengiriman', 'Proses Pengiriman')
+            ->get();
+
+        $transaction_sudah_sampai = Transaksi::where('konsumen_id', $konsumen->id)
+            ->where('status_pengiriman', 'Sudah Sampai')
+            ->get();
+
+        $transaction_sudah_diambil = Transaksi::where('konsumen_id', $konsumen->id)
+            ->where('status_pengiriman', 'Sudah Diambil')
+            ->get();
+
+
+
+        $transaction_belum_lunas = Transaksi::where('konsumen_id', $konsumen->id)
+            ->where('status_bayar', 'Belum Lunas')
+            ->get();
+
+        $transaction_sudah_lunas = Transaksi::where('konsumen_id', $konsumen->id)
+            ->where('status_bayar', 'Sudah Lunas')
+            ->get();
+
+
+
+
+        // Mengambil data konsumen yang terkait dengan pengguna
+        $konsumen = Konsumen::where('user_id', $user->id)->first();
+        // Mengambil data transaksi berdasarkan konsumen_id dan status_pengiriman
+        $statuses = ['Proses Packing', 'Proses Pengiriman', 'Sudah Sampai', 'Sudah Diambil'];
+        $transaksiByStatus = [];
+        foreach ($statuses as $status) {
+            $transaksiByStatus[$status] = Transaksi::where('konsumen_id', $konsumen->id)
+                ->where('status_pengiriman', $status)
+                ->get();
+        }
+        // Mengambil data transaksi berdasarkan konsumen_id dan status_pengiriman
+        $status_bayar = ['Sudah Lunas', 'Belum Lunas'];
+        $transaksiByStatusBayar = [];
+        foreach ($status_bayar as $status_bayar) {
+            $transaksiByStatusBayar[$status_bayar] = Transaksi::where('konsumen_id', $konsumen->id)
+                ->where('status_bayar', $status_bayar)
+                ->get();
+        }
+
+
+
+        return view('front.area.index', compact(
+            'title',
+            'subtitle',
+            'user',
+            'konsumen',
+            'messages',
+            'admin',
+            'informasi',
+            'transaction_proses_packing',
+            'transaction_proses_pengiriman',
+            'transaction_sudah_sampai',
+            'transaction_sudah_diambil',
+            'transaction_belum_lunas',
+            'transaction_sudah_lunas',
+            'transaksiByStatusBayar',
+            'transaksiByStatus'
+        ));
     }
+
+
 
 
 

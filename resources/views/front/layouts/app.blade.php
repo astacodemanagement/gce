@@ -210,6 +210,10 @@
             color: #666;
         }
     </style>
+
+    @stack('css')
+
+
 </head>
 
 <body class="">
@@ -486,6 +490,9 @@
     <script src="{{ asset('template/front') }}/assets/js/wow.min.js"></script>
 
     <script src="{{ asset('template/front') }}/assets/js/main.js"></script>
+
+    @stack('scripts')
+
 
 </body>
 

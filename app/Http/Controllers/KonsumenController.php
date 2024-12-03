@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Konsumen;
 use App\Models\Transaksi;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
 
 class KonsumenController extends Controller
 {
@@ -58,7 +62,8 @@ class KonsumenController extends Controller
         $request->merge(['no_telp' => str_replace(['+', ' '], '', $request->no_telp)]);
 
         $validatorRules = [
-            'nama_konsumen' => 'required',
+            'name' => 'required', // Validasi untuk nama
+            'email' => 'required|email|unique:users,email', // Validasi untuk tabel users
             'status_cad' => 'required',
             'no_telp' => [
                 'required',
@@ -67,52 +72,78 @@ class KonsumenController extends Controller
                     $query->where('cabang_id', $this->isSuperadmin() ? $request->cabang_id : Auth::user()->cabang_id);
                 }),
             ],
-            'email' => 'required|email',
             'alamat' => 'required',
         ];
 
-        // Jika superadmin, tambahkan aturan validasi untuk cabang_id
         if ($this->isSuperadmin()) {
             $validatorRules['cabang_id'] = 'required';
         }
 
         $validator = Validator::make($request->all(), $validatorRules, [
-            'no_telp.unique' => 'Ooops.......!!!',
+            'no_telp.unique' => 'Nomor telepon sudah terdaftar.',
+            'email.unique' => 'Email sudah digunakan.',
         ]);
 
         if ($validator->fails()) {
             $errors = $validator->errors();
 
-            // Tambahkan informasi nama konsumen jika nomor telepon sudah terdaftar
             if ($errors->has('no_telp')) {
                 $existingKonsumen = Konsumen::where('no_telp', $request->no_telp)->first();
 
                 if ($existingKonsumen) {
-                    $errors->add('no_telp', 'Nomor telepon sudah terdaftar untuk ' . $existingKonsumen->nama_konsumen);
-                } else {
-                    $errors->add('no_telp', 'Nomor telepon sudah terdaftar.');
+                    $errors->add('no_telp', 'Nomor telepon sudah terdaftar untuk user dengan ID ' . $existingKonsumen->user_id);
                 }
             }
 
             return response()->json(['errors' => $errors], 422);
         }
 
-        // Simpan data konsumen ke database
-        $konsumen = new Konsumen();
-        $konsumen->cabang_id = $this->isSuperadmin() ? $request->cabang_id : Auth::user()->cabang_id;
-        $konsumen->nama_konsumen = $request->nama_konsumen;
-        $konsumen->nama_perusahaan = $request->nama_perusahaan;
-        $konsumen->no_telp = $request->no_telp;
-        $konsumen->email = $request->email;
-        $konsumen->alamat = $request->alamat;
-        $konsumen->status_cad = $request->status_cad;
-        $konsumen->no_kontrak = $request->no_kontrak;
-        $konsumen->jatuh_tempo = $request->jatuh_tempo;
+        // Gunakan transaksi database
+        DB::beginTransaction();
 
-        $konsumen->save();
+        try {
+            // Simpan data ke tabel users
+            $user = new User();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->status = 'Aktif';
+            $user->cabang_id = $this->isSuperadmin() ? $request->cabang_id : Auth::user()->cabang_id;
+            $user->password = Hash::make($request->password); // Menggunakan password yang dienkripsi
+            $user->save();
 
-        return response()->json(['message' => 'Data konsumen berhasil disimpan']);
+            // Assign role ke pengguna
+            $role = Role::find(6); // Cari role dengan ID 6
+            if ($role) {
+                $user->assignRole($role->name); // Assign role ke user
+            } else {
+                return response(['success' => false, 'message' => 'Role tidak ditemukan'], 404);
+            }
+
+            // Simpan data ke tabel konsumen
+            $konsumen = new Konsumen();
+            $konsumen->user_id = $user->id; // Simpan ID user untuk relasi
+            $konsumen->cabang_id = $this->isSuperadmin() ? $request->cabang_id : Auth::user()->cabang_id;
+            $konsumen->no_telp = $request->no_telp;
+            $konsumen->alamat = $request->alamat;
+            $konsumen->status_cad = $request->status_cad;
+            $konsumen->no_kontrak = $request->no_kontrak;
+            $konsumen->jatuh_tempo = $request->jatuh_tempo;
+            $konsumen->save();
+
+            // Commit transaksi
+            DB::commit();
+
+            return response()->json(['message' => 'Data konsumen dan user berhasil disimpan']);
+        } catch (\Exception $e) {
+            // Rollback jika terjadi kesalahan
+            DB::rollBack();
+
+            return response()->json(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()], 500);
+        }
     }
+
+
+
 
 
 
@@ -121,6 +152,7 @@ class KonsumenController extends Controller
         $konsumen = Konsumen::when(!$this->isSuperadmin(), function ($q) {
             return $q->where('cabang_id', Auth::user()->cabang_id);
         })
+            ->with('user') // Memuat relasi dengan user
             ->where('id', $id)
             ->first();
 
@@ -131,6 +163,8 @@ class KonsumenController extends Controller
         $konsumen->nama_cabang = $konsumen->cabang?->nama_cabang;
         return response()->json($konsumen);
     }
+
+
 
     public function update(Request $request, $id)
     {
@@ -145,37 +179,50 @@ class KonsumenController extends Controller
             return response(['success' => false, 'message' => 'Konsumen tidak ditemukan'], 404);
         }
 
-        $request->merge(['no_telp' => str_replace(['+', ' '], '', $request->no_telp)]);
-
         // Validasi request
+        $request->merge(['no_telp' => str_replace(['+', ' '], '', $request->no_telp)]);
         $request->validate([
-            'nama_konsumen' => 'required',
-            'no_telp' => 'required|numeric',
+            'name' => 'required',
             'email' => 'required|email',
+            'password' => 'nullable|min:8|confirmed', // Password minimal 8 karakter, nullable, harus sama dengan password_confirmation
+            'name' => 'required',
+            'no_telp' => 'required|numeric',
             'alamat' => 'required',
             'status_cad' => 'required',
             'cabang_id' => $this->isSuperadmin() ? 'required' : 'nullable'
         ]);
 
-        // Update data konsumen berdasarkan request
-        $konsumen->nama_konsumen = $request->nama_konsumen;
+        // Update data user
+        $user = $konsumen->user;
+        if ($user) {
+            $user->name = $request->name;
+            $user->email = $request->email;
+
+            // Jika password diisi, lakukan hash dan update
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->password); // Menggunakan Hash::make
+            }
+
+            $user->save();
+        }
+
+        // Update data konsumen
         $konsumen->nama_perusahaan = $request->nama_perusahaan;
         $konsumen->no_telp = $request->no_telp;
-        $konsumen->email = $request->email;
         $konsumen->alamat = $request->alamat;
         $konsumen->status_cad = $request->status_cad;
         $konsumen->no_kontrak = $request->no_kontrak;
         $konsumen->jatuh_tempo = $request->jatuh_tempo;
         $konsumen->cabang_id = $this->isSuperadmin() ? $request->cabang_id : Auth::user()->cabang_id;
-
-        // Simpan perubahan
         $konsumen->save();
 
-        return response()->json(['message' => 'Data konsumen berhasil diperbarui']);
+        return response()->json(['message' => 'Data konsumen dan user berhasil diperbarui']);
     }
+
 
     public function destroy($id)
     {
+        // Ambil data konsumen berdasarkan ID dan cabang (jika bukan superadmin)
         $konsumen = Konsumen::when(!$this->isSuperadmin(), function ($q) {
             return $q->where('cabang_id', Auth::user()->cabang_id);
         })
@@ -192,8 +239,21 @@ class KonsumenController extends Controller
             return response()->json(['message' => 'Data konsumen tidak bisa dihapus karena masih berelasi dengan transaksi'], 422);
         }
 
+        // Ambil user terkait konsumen
+        $user = User::find($konsumen->user_id);
+
+        // Hapus peran pengguna jika ada
+        if ($user) {
+            // Hapus semua peran yang terkait dengan pengguna
+            $user->roles()->detach(); // Detach semua peran dari pengguna
+
+            // Hapus data pengguna di tabel users
+            $user->delete();
+        }
+
+        // Hapus data konsumen
         $konsumen->delete();
 
-        return response()->json(['message' => 'Data konsumen berhasil dihapus']);
+        return response()->json(['message' => 'Data konsumen beserta pengguna berhasil dihapus']);
     }
 }

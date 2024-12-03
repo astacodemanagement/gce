@@ -91,6 +91,7 @@ class PendaftaranController extends Controller
             'no_telp' => htmlspecialchars(strip_tags($request->no_telp)),
             'alamat' => htmlspecialchars(strip_tags($request->alamat)),
             'tanggal_lahir' => $request->tanggal_lahir,
+            
             'kode_referal' => htmlspecialchars(strip_tags($request->kode_referal)),
         ];
     
@@ -111,6 +112,7 @@ class PendaftaranController extends Controller
             'alamat' => $sanitizedInput['alamat'],
             'kode_referal' => $sanitizedInput['kode_referal'],
             'jenis_konsumen' => 'FLP',
+            'status_cad' => 'Non CAD',
         ]);
     
         // Assign role ke pengguna

@@ -2,9 +2,104 @@
 @section('title', $title)
 @section('subtitle', $subtitle)
 
+
+
+
+
 @push('css')
 
+<!-- <style>
+    /* Efek hover dengan hanya shadow */
+    .btn-light {
+        transition: box-shadow 0.3s ease;
+        /* Transisi halus untuk shadow */
+    }
+
+    .btn-light:hover {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        /* Tambahkan shadow saat hover */
+    }
+
+
+    /* Background color for active tab */
+    .nav-tabs .nav-link.active {
+        background-color: #007bff;
+        /* Ganti dengan warna yang diinginkan */
+        color: #fff;
+        /* Warna teks untuk tab aktif */
+        border: 1px solid #007bff;
+        /* Warna border */
+        border-radius: 5px;
+        /* Membuat sudut melengkung */
+    }
+
+    /* Background color for inactive tabs */
+    .nav-tabs .nav-link {
+        background-color: #f8f9fa;
+        /* Ganti dengan warna yang diinginkan */
+        color: #fff;
+        /* Warna teks untuk tab tidak aktif */
+        border: 1px solid #ddd;
+        /* Warna border */
+        border-radius: 5px;
+        /* Membuat sudut melengkung */
+        margin-right: 5px;
+        /* Memberi jarak antar tab */
+
+    }
+
+    /* Hover effect for inactive tabs */
+    .nav-tabs .nav-link:hover {
+        background-color: #e9ecef;
+        /* Warna saat hover */
+        color: #000;
+        /* Warna teks saat hover */
+        cursor: pointer;
+        /* Ubah kursor menjadi pointer */
+    }
+
+
+
+
+    /* 
+    .list-group-item {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .list-group-item:hover {
+        background-color: #f0f0f0;
+    }
+
+    .tracking-timeline {
+        border-left: 3px solid #007bff;
+        padding-left: 20px;
+    } */
+</style> -->
+
+<!-- CSS DataTables CDN -->
+
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
+<style>
+    #example th,
+    #example td,
+    #example1 th,
+    #example1 td,
+    #example2 th,
+    #example2 td,
+    #example3 th,
+    #example3 td,
+    #example4 th,
+    #example4 td,
+    #example5 th,
+    #example5 td {
+        text-align: left;
+    }
+</style>
+
+
 @endpush
+
 
 
 @section('content')
@@ -39,9 +134,9 @@
     <div class="container">
         <div class="sec-title-style3 text-center">
             <div class="sub-title center">
-                <div class="icon">
+                <!-- <div class="icon">
                     <img src="assets/img/icon/title-marker-2.png" alt="">
-                </div>
+                </div> -->
                 <h5>Kelola Data Area Di sini</h5>
             </div>
             <h2>Sesuaikan dengan data diri anda</h2>
@@ -64,7 +159,7 @@
                                 <li data-tab="#profil" class="tab-btn {{ (Auth::check() && Auth::user()->status === 'Aktif') ? 'active-btn' : '' }}"><span>Profil</span></li>
                                 @if (Auth::check() && Auth::user()->status === 'Aktif')
                                 <li data-tab="#track" class="tab-btn"><span>Order Saya</span></li>
-                                <li data-tab="#track" class="tab-btn"><span>Pembayaran</span></li>
+                                <li data-tab="#payment" class="tab-btn"><span>Pembayaran</span></li>
                                 @endif
 
                             </ul>
@@ -320,143 +415,751 @@
                                 </div>
                                 <!--End Single Tab-->
 
-                                <!--Start Single Tab-->
                                 <div class="tab" id="track">
                                     <div class="request-services-one__single-tab">
-                                        <!--Start Working Process One-->
-
-                                        <!--Start Work process Two-->
                                         <section class="work-process-two" style="margin-top: -100px;">
                                             <div class="container">
-                                                <div class="sec-title-style3 text-center">
-                                                    <div class="sub-title center">
-                                                        <div class="icon">
-                                                            <img src="asset('template/front') }}/assets/img/icon/title-marker.png" alt="">
-                                                        </div>
-                                                        <h5>Periksa Barang Anda</h5>
-                                                    </div>
-                                                    <h2>Cek Posisi Barang</h2>
-
-                                                </div>
                                                 <div class="row">
-                                                    <!--Start Work process Two Single-->
-                                                    <div class="col-xl-4 col-lg-4 wow fadeInLeft" data-wow-delay="0ms" data-wow-duration="1500ms">
-                                                        <div class="work-process-two__single">
-                                                            <div class="shape1"><img src=" assets/img/shape/work-process-v2-shape1.png" alt=""></div>
-                                                            <div class="work-process-two__single-icon">
-                                                                <div class="inner">
-                                                                    <span class="icon-enter-product-details"></span>
-                                                                </div>
-                                                            </div>
+                                                    <!-- Nav Tabs -->
+                                                    <ul class="nav nav-tabs" id="workProcessTabs" role="tablist">
+                                                        <li class="nav-item" role="presentation">
+                                                            <button class="nav-link active" id="proses-packing-tab" data-bs-toggle="tab" data-bs-target="#proses-packing" type="button" role="tab" aria-controls="proses-packing" aria-selected="true">
+                                                                Proses Packing
+                                                            </button>
+                                                        </li>
+                                                        <li class="nav-item" role="presentation">
+                                                            <button class="nav-link" id="proses-pengiriman-tab" data-bs-toggle="tab" data-bs-target="#proses-pengiriman" type="button" role="tab" aria-controls="proses-pengiriman" aria-selected="false">
+                                                                Proses Pengiriman
+                                                            </button>
+                                                        </li>
+                                                        <li class="nav-item" role="presentation">
+                                                            <button class="nav-link" id="sudah-sampai-tab" data-bs-toggle="tab" data-bs-target="#sudah-sampai" type="button" role="tab" aria-controls="sudah-sampai" aria-selected="false">
+                                                                Sudah Sampai
+                                                            </button>
+                                                        </li>
+                                                        <li class="nav-item" role="presentation">
+                                                            <button class="nav-link" id="sudah-diambil-tab" data-bs-toggle="tab" data-bs-target="#sudah-diambil" type="button" role="tab" aria-controls="sudah-diambil" aria-selected="false">
+                                                                Sudah Diambil
+                                                            </button>
+                                                        </li>
+                                                    </ul>
 
-                                                            <div class="work-process-two__single-text">
-                                                                <h3>Posisi - 1 </h3>
-                                                                <h2>Enter Product Details</h2>
-                                                                <p>Once you place your order via mail or fax our field staff will collect the documents
-                                                                    and consignments from.</p>
-                                                            </div>
+                                                    <div class="tab-content">
+                                                        <!-- Proses Packing -->
+                                                        <div class="tab-pane fade show active" id="proses-packing" role="tabpanel">
+
+                                                            <table id="example" class="display nowrap" style="width:100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th width="3%">No</th>
+                                                                        <th width="200px">Tanggal Kirim</th>
+                                                                        <th style="min-width:300px">Kode Resi</th>
+                                                                        <th>Nama Pengirim</th>
+                                                                        <th>Nama Barang</th>
+                                                                        <th>Total Koli</th>
+                                                                        <th>Berat</th>
+                                                                        <th style="min-width: 200px;">Kota Asal</th>
+                                                                        <th style="min-width: 250px;">Kota Tujuan</th>
+                                                                        <th style="min-width: 150px; text-align:left;">Total Bayar</th>
+                                                                        <th>Status Bayar</th>
+                                                                        <th>Status Bawa</th>
+                                                                        <th>Status Batal</th>
+                                                                        <th>Jenis Pembayaran</th>
+                                                                        <th style="min-width: 250px;">Aksi</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @php $i = 1; @endphp
+                                                                    @foreach ($transaction_proses_packing as $p)
+                                                                    <tr>
+                                                                        <td>{{ $i }}</td>
+                                                                        <td>{{ $p->tanggal_kirim}}</td>
+                                                                        <td>{{ $p->kode_resi}}</td>
+                                                                        <td>{{ $p->nama_konsumen}}</td>
+                                                                        <td>{{ $p->nama_barang}}</td>
+                                                                        <td>{{ $p->koli}}</td>
+                                                                        <td>{{ $p->berat}}</td>
+                                                                        <td><b>{{ $p->cabangAsal?->nama_cabang }}</b></td>
+                                                                        <td>{{ $p->cabangTujuan?->nama_cabang }}</td>
+                                                                        <td>{{ $p->total_bayar}}</td>
+                                                                        @if($p->status_bayar === 'Belum Lunas')
+                                                                        <td><span class="float-left badge bg-danger">{{ $p->status_bayar }}</span></td>
+                                                                        @elseif($p->status_bayar === 'Sudah Lunas')
+                                                                        <td><span class="float-left badge bg-success">{{ $p->status_bayar }}</span></td>
+                                                                        @else
+                                                                        <td>{{ $p->status_bayar }}</td>
+                                                                        @endif
+
+                                                                        @if($p->status_bawa === 'Belum Dibawa')
+                                                                        <td><span class="float-left badge bg-danger">{{ $p->status_bawa }}</span></td>
+                                                                        @elseif($p->status_bawa === 'Siap Dibawa')
+                                                                        <td><span class="float-left badge bg-warning">{{ $p->status_bawa }}</span></td>
+                                                                        @elseif($p->status_bawa === 'Sudah Dibawa')
+                                                                        <td><span class="float-left badge bg-success">{{ $p->status_bawa }}</span></td>
+                                                                        @elseif($p->status_bawa === 'Pengajuan Batal')
+                                                                        <td><span class="float-left badge bg-primary">{{ $p->status_bawa }}</span></td>
+
+                                                                        @else
+                                                                        <td>{{ $p->status_bawa }}</td>
+                                                                        @endif
+
+                                                                        @if(empty($p->status_batal))
+                                                                        <td><span class="float-left badge bg-secondary">Empty</span></td>
+                                                                        @elseif($p->status_batal === 'Pengajuan Batal')
+                                                                        <td>
+                                                                            <span class="float-left badge bg-primary">{{ $p->status_batal }}</span>
+                                                                        </td>
+                                                                        @elseif($p->status_batal === 'Verifikasi Disetujui')
+                                                                        <td>
+                                                                            <span class="float-left badge bg-warning">{{ $p->status_batal }}</span>
+                                                                            <br>
+                                                                            <span class="float-left badge bg-warning" style="font-size: larger;">Kode: {{ $p->kode_pembatalan }}</span>
+
+                                                                        </td>
+                                                                        @elseif($p->status_batal === 'Telah Diambil Pembatalan')
+                                                                        <td><span class="float-left badge bg-success">{{ $p->status_batal }}</span></td>
+                                                                        @elseif($p->status_batal === 'Verifikasi Ditolak')
+                                                                        <td>
+                                                                            <span class="float-left badge bg-danger" style="font-size: 14px;">{{ $p->status_batal }}</span>
+                                                                            <br>
+                                                                            <span class="float-left badge bg-danger" style="font-size: 10;">Alasan: {{ $p->alasan_tolak }}</span>
+                                                                        </td>
+                                                                        @else
+                                                                        <td>{{ $p->status_batal }}</td>
+                                                                        @endif
+
+
+                                                                        <td>{{ $p->jenis_pembayaran}}</td>
+                                                                        <td>
+                                                                            <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
+                                                                                <i class="fas fa-edit"></i> Edit
+                                                                            </a>
+                                                                            <button class="btn btn-sm btn-danger btn-hapus" data-id="{{ $p->id }}" style="color: white">
+                                                                                <i class="fas fa-trash-alt"></i> Delete
+                                                                            </button>
+                                                                        </td>
+                                                                    </tr>
+                                                                    @php $i++; @endphp
+                                                                    @endforeach
+                                                                </tbody>
+
+                                                            </table>
+
+
+
                                                         </div>
-                                                    </div>
-                                                    <!--End Work process Two Single-->
 
-                                                    <!--Start Work process Two Single-->
-                                                    <div class="col-xl-4 col-lg-4 wow fadeInRight" data-wow-delay="200ms" data-wow-duration="1500ms">
-                                                        <div class="work-process-two__single">
-                                                            <div class="shape1"><img src=" assets/img/shape/work-process-v2-shape1.png" alt=""></div>
-                                                            <div class="work-process-two__single-icon">
-                                                                <div class="inner">
-                                                                    <span class="icon-pay-your-service-tag"></span>
-                                                                </div>
-                                                            </div>
+                                                        <!-- Proses Pengiriman -->
+                                                        <div class="tab-pane fade" id="proses-pengiriman" role="tabpanel">
+                                                            <table id="example1" class="display nowrap" style="width:100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th width="3%">No</th>
+                                                                        <th width="200px">Tanggal Kirim</th>
+                                                                        <th style="min-width:300px">Kode Resi</th>
+                                                                        <th>Nama Pengirim</th>
+                                                                        <th>Nama Barang</th>
+                                                                        <th>Total Koli</th>
+                                                                        <th>Berat</th>
+                                                                        <th style="min-width: 200px;">Kota Asal</th>
+                                                                        <th style="min-width: 250px;">Kota Tujuan</th>
+                                                                        <th style="min-width: 150px; text-align:left;">Total Bayar</th>
+                                                                        <th>Status Bayar</th>
+                                                                        <th>Status Bawa</th>
+                                                                        <th>Status Batal</th>
+                                                                        <th>Jenis Pembayaran</th>
+                                                                        <th style="min-width: 250px;">Aksi</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @php $i = 1; @endphp
+                                                                    @foreach ($transaction_proses_pengiriman as $p)
+                                                                    <tr>
+                                                                        <td>{{ $i }}</td>
+                                                                        <td>{{ $p->tanggal_kirim}}</td>
+                                                                        <td>{{ $p->kode_resi}}</td>
+                                                                        <td>{{ $p->nama_konsumen}}</td>
+                                                                        <td>{{ $p->nama_barang}}</td>
+                                                                        <td>{{ $p->koli}}</td>
+                                                                        <td>{{ $p->berat}}</td>
+                                                                        <td><b>{{ $p->cabangAsal?->nama_cabang }}</b></td>
+                                                                        <td>{{ $p->cabangTujuan?->nama_cabang }}</td>
+                                                                        <td>{{ $p->total_bayar}}</td>
+                                                                        @if($p->status_bayar === 'Belum Lunas')
+                                                                        <td><span class="float-left badge bg-danger">{{ $p->status_bayar }}</span></td>
+                                                                        @elseif($p->status_bayar === 'Sudah Lunas')
+                                                                        <td><span class="float-left badge bg-success">{{ $p->status_bayar }}</span></td>
+                                                                        @else
+                                                                        <td>{{ $p->status_bayar }}</td>
+                                                                        @endif
 
-                                                            <div class="work-process-two__single-text">
-                                                                <h3>Posisi - 2 </h3>
-                                                                <h2>Pay Your Service Tag</h2>
-                                                                <p>Once you place your order via mail or fax our field staff will collect the documents
-                                                                    and consignments from.</p>
-                                                            </div>
+                                                                        @if($p->status_bawa === 'Belum Dibawa')
+                                                                        <td><span class="float-left badge bg-danger">{{ $p->status_bawa }}</span></td>
+                                                                        @elseif($p->status_bawa === 'Siap Dibawa')
+                                                                        <td><span class="float-left badge bg-warning">{{ $p->status_bawa }}</span></td>
+                                                                        @elseif($p->status_bawa === 'Sudah Dibawa')
+                                                                        <td><span class="float-left badge bg-success">{{ $p->status_bawa }}</span></td>
+                                                                        @elseif($p->status_bawa === 'Pengajuan Batal')
+                                                                        <td><span class="float-left badge bg-primary">{{ $p->status_bawa }}</span></td>
+
+                                                                        @else
+                                                                        <td>{{ $p->status_bawa }}</td>
+                                                                        @endif
+
+                                                                        @if(empty($p->status_batal))
+                                                                        <td><span class="float-left badge bg-secondary">Empty</span></td>
+                                                                        @elseif($p->status_batal === 'Pengajuan Batal')
+                                                                        <td>
+                                                                            <span class="float-left badge bg-primary">{{ $p->status_batal }}</span>
+                                                                        </td>
+                                                                        @elseif($p->status_batal === 'Verifikasi Disetujui')
+                                                                        <td>
+                                                                            <span class="float-left badge bg-warning">{{ $p->status_batal }}</span>
+                                                                            <br>
+                                                                            <span class="float-left badge bg-warning" style="font-size: larger;">Kode: {{ $p->kode_pembatalan }}</span>
+
+                                                                        </td>
+                                                                        @elseif($p->status_batal === 'Telah Diambil Pembatalan')
+                                                                        <td><span class="float-left badge bg-success">{{ $p->status_batal }}</span></td>
+                                                                        @elseif($p->status_batal === 'Verifikasi Ditolak')
+                                                                        <td>
+                                                                            <span class="float-left badge bg-danger" style="font-size: 14px;">{{ $p->status_batal }}</span>
+                                                                            <br>
+                                                                            <span class="float-left badge bg-danger" style="font-size: 10;">Alasan: {{ $p->alasan_tolak }}</span>
+                                                                        </td>
+                                                                        @else
+                                                                        <td>{{ $p->status_batal }}</td>
+                                                                        @endif
+
+
+                                                                        <td>{{ $p->jenis_pembayaran}}</td>
+                                                                        <td>
+                                                                            <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
+                                                                                <i class="fas fa-edit"></i> Edit
+                                                                            </a>
+                                                                            <button class="btn btn-sm btn-danger btn-hapus" data-id="{{ $p->id }}" style="color: white">
+                                                                                <i class="fas fa-trash-alt"></i> Delete
+                                                                            </button>
+                                                                        </td>
+                                                                    </tr>
+                                                                    @php $i++; @endphp
+                                                                    @endforeach
+                                                                </tbody>
+
+                                                            </table>
+
                                                         </div>
-                                                    </div>
-                                                    <!--End Work process Two Single-->
 
-                                                    <!--Start Work process Two Single-->
-                                                    <div class="col-xl-4 col-lg-4 wow fadeInLeft" data-wow-delay="400ms" data-wow-duration="1500ms">
-                                                        <div class="work-process-two__single">
-                                                            <div class="work-process-two__single-icon">
-                                                                <div class="inner">
-                                                                    <span class="icon-road-transport t5"></span>
-                                                                </div>
-                                                            </div>
+                                                        <!-- Sudah Sampai -->
+                                                        <div class="tab-pane fade" id="sudah-sampai" role="tabpanel">
+                                                            <table id="example2" class="display nowrap" style="width:100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th width="3%">No</th>
+                                                                        <th width="200px">Tanggal Kirim</th>
+                                                                        <th style="min-width:300px">Kode Resi</th>
+                                                                        <th>Nama Pengirim</th>
+                                                                        <th>Nama Barang</th>
+                                                                        <th>Total Koli</th>
+                                                                        <th>Berat</th>
+                                                                        <th style="min-width: 200px;">Kota Asal</th>
+                                                                        <th style="min-width: 250px;">Kota Tujuan</th>
+                                                                        <th style="min-width: 150px; text-align:left;">Total Bayar</th>
+                                                                        <th>Status Bayar</th>
+                                                                        <th>Status Bawa</th>
+                                                                        <th>Status Batal</th>
+                                                                        <th>Jenis Pembayaran</th>
+                                                                        <th style="min-width: 250px;">Aksi</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @php $i = 1; @endphp
+                                                                    @foreach ($transaction_sudah_sampai as $p)
+                                                                    <tr>
+                                                                        <td>{{ $i }}</td>
+                                                                        <td>{{ $p->tanggal_kirim}}</td>
+                                                                        <td>{{ $p->kode_resi}}</td>
+                                                                        <td>{{ $p->nama_konsumen}}</td>
+                                                                        <td>{{ $p->nama_barang}}</td>
+                                                                        <td>{{ $p->koli}}</td>
+                                                                        <td>{{ $p->berat}}</td>
+                                                                        <td><b>{{ $p->cabangAsal?->nama_cabang }}</b></td>
+                                                                        <td>{{ $p->cabangTujuan?->nama_cabang }}</td>
+                                                                        <td>{{ $p->total_bayar}}</td>
+                                                                        @if($p->status_bayar === 'Belum Lunas')
+                                                                        <td><span class="float-left badge bg-danger">{{ $p->status_bayar }}</span></td>
+                                                                        @elseif($p->status_bayar === 'Sudah Lunas')
+                                                                        <td><span class="float-left badge bg-success">{{ $p->status_bayar }}</span></td>
+                                                                        @else
+                                                                        <td>{{ $p->status_bayar }}</td>
+                                                                        @endif
 
-                                                            <div class="work-process-two__single-text">
-                                                                <h3>Posisi - 3 </h3>
-                                                                <h2>Ready To Go Your Goods</h2>
-                                                                <p>Once you place your order via mail or fax our field staff will collect the documents
-                                                                    and consignments from.</p>
-                                                            </div>
+                                                                        @if($p->status_bawa === 'Belum Dibawa')
+                                                                        <td><span class="float-left badge bg-danger">{{ $p->status_bawa }}</span></td>
+                                                                        @elseif($p->status_bawa === 'Siap Dibawa')
+                                                                        <td><span class="float-left badge bg-warning">{{ $p->status_bawa }}</span></td>
+                                                                        @elseif($p->status_bawa === 'Sudah Dibawa')
+                                                                        <td><span class="float-left badge bg-success">{{ $p->status_bawa }}</span></td>
+                                                                        @elseif($p->status_bawa === 'Pengajuan Batal')
+                                                                        <td><span class="float-left badge bg-primary">{{ $p->status_bawa }}</span></td>
+
+                                                                        @else
+                                                                        <td>{{ $p->status_bawa }}</td>
+                                                                        @endif
+
+                                                                        @if(empty($p->status_batal))
+                                                                        <td><span class="float-left badge bg-secondary">Empty</span></td>
+                                                                        @elseif($p->status_batal === 'Pengajuan Batal')
+                                                                        <td>
+                                                                            <span class="float-left badge bg-primary">{{ $p->status_batal }}</span>
+                                                                        </td>
+                                                                        @elseif($p->status_batal === 'Verifikasi Disetujui')
+                                                                        <td>
+                                                                            <span class="float-left badge bg-warning">{{ $p->status_batal }}</span>
+                                                                            <br>
+                                                                            <span class="float-left badge bg-warning" style="font-size: larger;">Kode: {{ $p->kode_pembatalan }}</span>
+
+                                                                        </td>
+                                                                        @elseif($p->status_batal === 'Telah Diambil Pembatalan')
+                                                                        <td><span class="float-left badge bg-success">{{ $p->status_batal }}</span></td>
+                                                                        @elseif($p->status_batal === 'Verifikasi Ditolak')
+                                                                        <td>
+                                                                            <span class="float-left badge bg-danger" style="font-size: 14px;">{{ $p->status_batal }}</span>
+                                                                            <br>
+                                                                            <span class="float-left badge bg-danger" style="font-size: 10;">Alasan: {{ $p->alasan_tolak }}</span>
+                                                                        </td>
+                                                                        @else
+                                                                        <td>{{ $p->status_batal }}</td>
+                                                                        @endif
+
+
+                                                                        <td>{{ $p->jenis_pembayaran}}</td>
+                                                                        <td>
+                                                                            <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
+                                                                                <i class="fas fa-edit"></i> Edit
+                                                                            </a>
+                                                                            <button class="btn btn-sm btn-danger btn-hapus" data-id="{{ $p->id }}" style="color: white">
+                                                                                <i class="fas fa-trash-alt"></i> Delete
+                                                                            </button>
+                                                                        </td>
+                                                                    </tr>
+                                                                    @php $i++; @endphp
+                                                                    @endforeach
+                                                                </tbody>
+
+                                                            </table>
+
+
                                                         </div>
+
+                                                        <!-- Sudah Diambil -->
+                                                        <div class="tab-pane fade" id="sudah-diambil" role="tabpanel">
+                                                            <table id="example3" class="display nowrap" style="width:100%">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th width="3%">No</th>
+                                                                        <th width="200px">Tanggal Kirim</th>
+                                                                        <th style="min-width:300px">Kode Resi</th>
+                                                                        <th>Nama Pengirim</th>
+                                                                        <th>Nama Barang</th>
+                                                                        <th>Total Koli</th>
+                                                                        <th>Berat</th>
+                                                                        <th style="min-width: 200px;">Kota Asal</th>
+                                                                        <th style="min-width: 250px;">Kota Tujuan</th>
+                                                                        <th style="min-width: 150px; text-align:left;">Total Bayar</th>
+                                                                        <th>Status Bayar</th>
+                                                                        <th>Status Bawa</th>
+                                                                        <th>Status Batal</th>
+                                                                        <th>Jenis Pembayaran</th>
+                                                                        <th style="min-width: 250px;">Aksi</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @php $i = 1; @endphp
+                                                                    @foreach ($transaction_sudah_diambil as $p)
+                                                                    <tr>
+                                                                        <td>{{ $i }}</td>
+                                                                        <td>{{ $p->tanggal_kirim}}</td>
+                                                                        <td>{{ $p->kode_resi}}</td>
+                                                                        <td>{{ $p->nama_konsumen}}</td>
+                                                                        <td>{{ $p->nama_barang}}</td>
+                                                                        <td>{{ $p->koli}}</td>
+                                                                        <td>{{ $p->berat}}</td>
+                                                                        <td><b>{{ $p->cabangAsal?->nama_cabang }}</b></td>
+                                                                        <td>{{ $p->cabangTujuan?->nama_cabang }}</td>
+                                                                        <td>{{ $p->total_bayar}}</td>
+                                                                        @if($p->status_bayar === 'Belum Lunas')
+                                                                        <td><span class="float-left badge bg-danger">{{ $p->status_bayar }}</span></td>
+                                                                        @elseif($p->status_bayar === 'Sudah Lunas')
+                                                                        <td><span class="float-left badge bg-success">{{ $p->status_bayar }}</span></td>
+                                                                        @else
+                                                                        <td>{{ $p->status_bayar }}</td>
+                                                                        @endif
+
+                                                                        @if($p->status_bawa === 'Belum Dibawa')
+                                                                        <td><span class="float-left badge bg-danger">{{ $p->status_bawa }}</span></td>
+                                                                        @elseif($p->status_bawa === 'Siap Dibawa')
+                                                                        <td><span class="float-left badge bg-warning">{{ $p->status_bawa }}</span></td>
+                                                                        @elseif($p->status_bawa === 'Sudah Dibawa')
+                                                                        <td><span class="float-left badge bg-success">{{ $p->status_bawa }}</span></td>
+                                                                        @elseif($p->status_bawa === 'Pengajuan Batal')
+                                                                        <td><span class="float-left badge bg-primary">{{ $p->status_bawa }}</span></td>
+
+                                                                        @else
+                                                                        <td>{{ $p->status_bawa }}</td>
+                                                                        @endif
+
+                                                                        @if(empty($p->status_batal))
+                                                                        <td><span class="float-left badge bg-secondary">Empty</span></td>
+                                                                        @elseif($p->status_batal === 'Pengajuan Batal')
+                                                                        <td>
+                                                                            <span class="float-left badge bg-primary">{{ $p->status_batal }}</span>
+                                                                        </td>
+                                                                        @elseif($p->status_batal === 'Verifikasi Disetujui')
+                                                                        <td>
+                                                                            <span class="float-left badge bg-warning">{{ $p->status_batal }}</span>
+                                                                            <br>
+                                                                            <span class="float-left badge bg-warning" style="font-size: larger;">Kode: {{ $p->kode_pembatalan }}</span>
+
+                                                                        </td>
+                                                                        @elseif($p->status_batal === 'Telah Diambil Pembatalan')
+                                                                        <td><span class="float-left badge bg-success">{{ $p->status_batal }}</span></td>
+                                                                        @elseif($p->status_batal === 'Verifikasi Ditolak')
+                                                                        <td>
+                                                                            <span class="float-left badge bg-danger" style="font-size: 14px;">{{ $p->status_batal }}</span>
+                                                                            <br>
+                                                                            <span class="float-left badge bg-danger" style="font-size: 10;">Alasan: {{ $p->alasan_tolak }}</span>
+                                                                        </td>
+                                                                        @else
+                                                                        <td>{{ $p->status_batal }}</td>
+                                                                        @endif
+
+
+                                                                        <td>{{ $p->jenis_pembayaran}}</td>
+                                                                        <td>
+                                                                            <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
+                                                                                <i class="fas fa-edit"></i> Edit
+                                                                            </a>
+                                                                            <button class="btn btn-sm btn-danger btn-hapus" data-id="{{ $p->id }}" style="color: white">
+                                                                                <i class="fas fa-trash-alt"></i> Delete
+                                                                            </button>
+                                                                        </td>
+                                                                    </tr>
+                                                                    @php $i++; @endphp
+                                                                    @endforeach
+                                                                </tbody>
+
+                                                            </table>
+
+
+                                                        </div>
+
                                                     </div>
-                                                    <!--End Work process Two Single-->
+
+
+
                                                 </div>
                                             </div>
                                         </section>
-                                        <!--End Work process Two-->
-
-
-                                        <div class="tracking-timeline">
-                                            <!-- Step 1: Order Placed -->
-                                            <div class="timeline-step completed">
-                                                <div class="step-marker"></div>
-                                                <div class="step-details">
-                                                    <h4>Pesanan Dibuat</h4>
-                                                    <p>Pesanan telah diterima pada 01-11-2024</p>
-                                                </div>
-                                            </div>
-
-                                            <!-- Step 2: Order Processed -->
-                                            <div class="timeline-step completed">
-                                                <div class="step-marker"></div>
-                                                <div class="step-details">
-                                                    <h4>Pesanan Diproses</h4>
-                                                    <p>Pesanan sedang diproses pada 02-11-2024</p>
-                                                </div>
-                                            </div>
-
-                                            <!-- Step 3: In Transit -->
-                                            <div class="timeline-step active">
-                                                <div class="step-marker"></div>
-                                                <div class="step-details">
-                                                    <h4>Dalam Pengiriman</h4>
-                                                    <p>Pesanan sedang dalam perjalanan pada 03-11-2024</p>
-                                                </div>
-                                            </div>
-
-                                            <!-- Step 4: Out for Delivery -->
-                                            <div class="timeline-step">
-                                                <div class="step-marker"></div>
-                                                <div class="step-details">
-                                                    <h4>Pesanan Siap Dikirim</h4>
-                                                    <p>Pesanan keluar untuk pengantaran</p>
-                                                </div>
-                                            </div>
-
-                                            <!-- Step 5: Delivered -->
-                                            <div class="timeline-step">
-                                                <div class="step-marker"></div>
-                                                <div class="step-details">
-                                                    <h4>Pesanan Diterima</h4>
-                                                    <p>Pesanan telah diterima</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
-
                                     </div>
                                 </div>
-                                <!--End Single Tab-->
+
+
+
+
+
+
+
+
+                                <div class="tab" id="payment">
+                                    <div class="request-services-one__single-tab">
+                                        <section class="work-process-two" style="margin-top: -100px;">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="container">
+                                                        <!-- Nav Tabs -->
+                                                        <ul class="nav nav-tabs" id="workProcessTabs" role="tablist">
+                                                            <li class="nav-item" role="presentation">
+                                                                <button class="nav-link active" id="belum-tab" data-bs-toggle="tab" data-bs-target="#belum" type="button" role="tab" aria-controls="belum" aria-selected="true">
+                                                                    Belum Lunas
+                                                                </button>
+                                                            </li>
+                                                            <li class="nav-item" role="presentation">
+                                                                <button class="nav-link" id="lunas-tab" data-bs-toggle="tab" data-bs-target="#lunas" type="button" role="tab" aria-controls="lunas" aria-selected="false">
+                                                                    Lunas
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+
+                                                        <div class="tab-content">
+                                                            <div class="tab-pane fade show active" id="belum" role="tabpanel">
+                                                                <table id="example4" class="display nowrap" style="width:100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th width="3%">No</th>
+                                                                            <th width="200px">Tanggal Kirim</th>
+                                                                            <th style="min-width:300px">Kode Resi</th>
+                                                                            <th>Nama Pengirim</th>
+                                                                            <th>Nama Barang</th>
+                                                                            <th>Total Koli</th>
+                                                                            <th>Berat</th>
+                                                                            <th style="min-width: 200px;">Kota Asal</th>
+                                                                            <th style="min-width: 250px;">Kota Tujuan</th>
+                                                                            <th style="min-width: 150px; text-align:left;">Total Bayar</th>
+                                                                            <th>Status Bayar</th>
+                                                                            <th>Status Bawa</th>
+                                                                            <th>Status Batal</th>
+                                                                            <th>Jenis Pembayaran</th>
+                                                                            <th style="min-width: 250px;">Aksi</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @php $i = 1; @endphp
+                                                                        @foreach ($transaction_belum_lunas as $p)
+                                                                        <tr>
+                                                                            <td>{{ $i }}</td>
+                                                                            <td>{{ $p->tanggal_kirim}}</td>
+                                                                            <td>{{ $p->kode_resi}}</td>
+                                                                            <td>{{ $p->nama_konsumen}}</td>
+                                                                            <td>{{ $p->nama_barang}}</td>
+                                                                            <td>{{ $p->koli}}</td>
+                                                                            <td>{{ $p->berat}}</td>
+                                                                            <td><b>{{ $p->cabangAsal?->nama_cabang }}</b></td>
+                                                                            <td>{{ $p->cabangTujuan?->nama_cabang }}</td>
+                                                                            <td>{{ $p->total_bayar}}</td>
+                                                                            @if($p->status_bayar === 'Belum Lunas')
+                                                                            <td><span class="float-left badge bg-danger">{{ $p->status_bayar }}</span></td>
+                                                                            @elseif($p->status_bayar === 'Sudah Lunas')
+                                                                            <td><span class="float-left badge bg-success">{{ $p->status_bayar }}</span></td>
+                                                                            @else
+                                                                            <td>{{ $p->status_bayar }}</td>
+                                                                            @endif
+
+                                                                            @if($p->status_bawa === 'Belum Dibawa')
+                                                                            <td><span class="float-left badge bg-danger">{{ $p->status_bawa }}</span></td>
+                                                                            @elseif($p->status_bawa === 'Siap Dibawa')
+                                                                            <td><span class="float-left badge bg-warning">{{ $p->status_bawa }}</span></td>
+                                                                            @elseif($p->status_bawa === 'Sudah Dibawa')
+                                                                            <td><span class="float-left badge bg-success">{{ $p->status_bawa }}</span></td>
+                                                                            @elseif($p->status_bawa === 'Pengajuan Batal')
+                                                                            <td><span class="float-left badge bg-primary">{{ $p->status_bawa }}</span></td>
+
+                                                                            @else
+                                                                            <td>{{ $p->status_bawa }}</td>
+                                                                            @endif
+
+                                                                            @if(empty($p->status_batal))
+                                                                            <td><span class="float-left badge bg-secondary">Empty</span></td>
+                                                                            @elseif($p->status_batal === 'Pengajuan Batal')
+                                                                            <td>
+                                                                                <span class="float-left badge bg-primary">{{ $p->status_batal }}</span>
+                                                                            </td>
+                                                                            @elseif($p->status_batal === 'Verifikasi Disetujui')
+                                                                            <td>
+                                                                                <span class="float-left badge bg-warning">{{ $p->status_batal }}</span>
+                                                                                <br>
+                                                                                <span class="float-left badge bg-warning" style="font-size: larger;">Kode: {{ $p->kode_pembatalan }}</span>
+
+                                                                            </td>
+                                                                            @elseif($p->status_batal === 'Telah Diambil Pembatalan')
+                                                                            <td><span class="float-left badge bg-success">{{ $p->status_batal }}</span></td>
+                                                                            @elseif($p->status_batal === 'Verifikasi Ditolak')
+                                                                            <td>
+                                                                                <span class="float-left badge bg-danger" style="font-size: 14px;">{{ $p->status_batal }}</span>
+                                                                                <br>
+                                                                                <span class="float-left badge bg-danger" style="font-size: 10;">Alasan: {{ $p->alasan_tolak }}</span>
+                                                                            </td>
+                                                                            @else
+                                                                            <td>{{ $p->status_batal }}</td>
+                                                                            @endif
+
+
+                                                                            <td>{{ $p->jenis_pembayaran}}</td>
+                                                                            <td>
+                                                                                <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
+                                                                                    <i class="fas fa-eye"></i> Detail
+                                                                                </a>
+                                                                                <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-success btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
+                                                                                    <i class="fa fa-usd"></i> Bayar
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                        @php $i++; @endphp
+                                                                        @endforeach
+                                                                    </tbody>
+
+                                                                </table>
+                                                            </div>
+
+                                                            <div class="tab-pane fade" id="lunas" role="tabpanel">
+                                                                <table id="example5" class="display nowrap" style="width:100%">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th width="3%">No</th>
+                                                                            <th width="200px">Tanggal Kirim</th>
+                                                                            <th style="min-width:300px">Kode Resi</th>
+                                                                            <th>Nama Pengirim</th>
+                                                                            <th>Nama Barang</th>
+                                                                            <th>Total Koli</th>
+                                                                            <th>Berat</th>
+                                                                            <th style="min-width: 200px;">Kota Asal</th>
+                                                                            <th style="min-width: 250px;">Kota Tujuan</th>
+                                                                            <th style="min-width: 150px; text-align:left;">Total Bayar</th>
+                                                                            <th>Status Bayar</th>
+                                                                            <th>Status Bawa</th>
+                                                                            <th>Status Batal</th>
+                                                                            <th>Jenis Pembayaran</th>
+                                                                            <th style="min-width: 250px;">Aksi</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @php $i = 1; @endphp
+                                                                        @foreach ($transaction_sudah_lunas as $p)
+                                                                        <tr>
+                                                                            <td>{{ $i }}</td>
+                                                                            <td>{{ $p->tanggal_kirim}}</td>
+                                                                            <td>{{ $p->kode_resi}}</td>
+                                                                            <td>{{ $p->nama_konsumen}}</td>
+                                                                            <td>{{ $p->nama_barang}}</td>
+                                                                            <td>{{ $p->koli}}</td>
+                                                                            <td>{{ $p->berat}}</td>
+                                                                            <td><b>{{ $p->cabangAsal?->nama_cabang }}</b></td>
+                                                                            <td>{{ $p->cabangTujuan?->nama_cabang }}</td>
+                                                                            <td>{{ $p->total_bayar}}</td>
+                                                                            @if($p->status_bayar === 'Belum Lunas')
+                                                                            <td><span class="float-left badge bg-danger">{{ $p->status_bayar }}</span></td>
+                                                                            @elseif($p->status_bayar === 'Sudah Lunas')
+                                                                            <td><span class="float-left badge bg-success">{{ $p->status_bayar }}</span></td>
+                                                                            @else
+                                                                            <td>{{ $p->status_bayar }}</td>
+                                                                            @endif
+
+                                                                            @if($p->status_bawa === 'Belum Dibawa')
+                                                                            <td><span class="float-left badge bg-danger">{{ $p->status_bawa }}</span></td>
+                                                                            @elseif($p->status_bawa === 'Siap Dibawa')
+                                                                            <td><span class="float-left badge bg-warning">{{ $p->status_bawa }}</span></td>
+                                                                            @elseif($p->status_bawa === 'Sudah Dibawa')
+                                                                            <td><span class="float-left badge bg-success">{{ $p->status_bawa }}</span></td>
+                                                                            @elseif($p->status_bawa === 'Pengajuan Batal')
+                                                                            <td><span class="float-left badge bg-primary">{{ $p->status_bawa }}</span></td>
+
+                                                                            @else
+                                                                            <td>{{ $p->status_bawa }}</td>
+                                                                            @endif
+
+                                                                            @if(empty($p->status_batal))
+                                                                            <td><span class="float-left badge bg-secondary">Empty</span></td>
+                                                                            @elseif($p->status_batal === 'Pengajuan Batal')
+                                                                            <td>
+                                                                                <span class="float-left badge bg-primary">{{ $p->status_batal }}</span>
+                                                                            </td>
+                                                                            @elseif($p->status_batal === 'Verifikasi Disetujui')
+                                                                            <td>
+                                                                                <span class="float-left badge bg-warning">{{ $p->status_batal }}</span>
+                                                                                <br>
+                                                                                <span class="float-left badge bg-warning" style="font-size: larger;">Kode: {{ $p->kode_pembatalan }}</span>
+
+                                                                            </td>
+                                                                            @elseif($p->status_batal === 'Telah Diambil Pembatalan')
+                                                                            <td><span class="float-left badge bg-success">{{ $p->status_batal }}</span></td>
+                                                                            @elseif($p->status_batal === 'Verifikasi Ditolak')
+                                                                            <td>
+                                                                                <span class="float-left badge bg-danger" style="font-size: 14px;">{{ $p->status_batal }}</span>
+                                                                                <br>
+                                                                                <span class="float-left badge bg-danger" style="font-size: 10;">Alasan: {{ $p->alasan_tolak }}</span>
+                                                                            </td>
+                                                                            @else
+                                                                            <td>{{ $p->status_batal }}</td>
+                                                                            @endif
+
+
+                                                                            <td>{{ $p->jenis_pembayaran}}</td>
+                                                                            <td>
+                                                                                <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
+                                                                                    <i class="fas fa-eye"></i> Detail
+                                                                                </a>
+                                                                                <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-success btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
+                                                                                    <i class="fa fa-usd"></i> Bayar
+                                                                                </a>
+
+                                                                            </td>
+                                                                        </tr>
+                                                                        @php $i++; @endphp
+                                                                        @endforeach
+                                                                    </tbody>
+
+                                                                </table>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+                                    </div>
+                                </div>
+
+
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        // Mengatur event click pada setiap list item
+                                        const listItems = document.querySelectorAll('.toggle-detail-item');
+
+                                        listItems.forEach(item => {
+                                            item.addEventListener('click', function() {
+                                                // Temukan detail-card yang terkait dengan item ini
+                                                const detailCard = item.querySelector('.detail-card');
+
+                                                // Toggle collapse: sembunyikan atau tampilkan detail
+                                                detailCard.classList.toggle('collapse');
+                                            });
+                                        });
+                                    });
+                                </script>
+
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const buttons = document.querySelectorAll('.toggle-detail');
+
+                                        buttons.forEach(button => {
+                                            button.addEventListener('click', function() {
+                                                const parent = button.closest('.list-group-item');
+                                                const detailCard = parent.querySelector('.detail-card');
+
+                                                // Ambil data dari atribut tombol
+                                                const resi = button.getAttribute('data-resi');
+                                                const status = button.getAttribute('data-status');
+                                                const nama = button.getAttribute('data-nama');
+                                                const tanggal = button.getAttribute('data-tanggal');
+
+                                                // Masukkan data ke dalam card
+                                                detailCard.querySelector('.detail-resi').textContent = resi;
+                                                detailCard.querySelector('.detail-status').textContent = status;
+                                                detailCard.querySelector('.detail-nama').textContent = nama;
+                                                detailCard.querySelector('.detail-tanggal').textContent = tanggal;
+
+                                                // Toggle collapse: sembunyikan atau tampilkan card
+                                                detailCard.classList.toggle('collapse');
+                                            });
+                                        });
+                                    });
+                                </script>
+
+
+
+
+
+
+
                             </div>
+
+
+
+
+
+
+
+
                         </div>
                     </div>
                 </div>
@@ -468,11 +1171,27 @@
 
 
 
-
-
 @endsection
 
 
 @push('scripts')
+
+<!-- JS DataTables CDN (termasuk jQuery dan DataTables) -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+
+<script>
+    $(document).ready(function() {
+        // Apply DataTable to all tables with specific IDs
+        $('#example, #example1, #example2, #example3, #example4, #example5 ').DataTable({
+            scrollX: true,
+            responsive: true,
+            autoWidth: true
+        });
+    });
+</script>
+
+
 
 @endpush

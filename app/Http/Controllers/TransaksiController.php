@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cabang;
-use App\Models\Invoice;
 use App\Models\Konsumen;
 use App\Models\Kota;
 use App\Models\Profil;
@@ -29,7 +28,6 @@ class TransaksiController extends Controller
     }
 
     // ALL KONFIGURASI
-
 
     // ================================= Fungsi Booking ================================
     public function index_booking()
@@ -139,6 +137,7 @@ class TransaksiController extends Controller
         $booking->koli = $request->koli;
         $booking->berat = $request->berat;
         $booking->keterangan = $request->keterangan;
+        $booking->status_pengiriman = 'Proses Packing';
 
         $booking->save();
 
@@ -499,12 +498,15 @@ class TransaksiController extends Controller
         $term = $request->term;
         $cabang_id = Auth::user()->cabang_id; // Ambil cabang_id dari user yang sedang login
 
-        $data = Konsumen::where(function ($query) use ($term) {
-            if (!empty($term)) {
-                $query->where('nama_konsumen', 'LIKE', '%' . $term . '%')
-                    ->orWhere('no_telp', 'LIKE', '%' . $term . '%'); // Menambahkan kondisi pencarian berdasarkan nomor telepon
-            }
-        })
+        $data = Konsumen::with('user') // Memuat relasi user
+            ->where(function ($query) use ($term) {
+                if (!empty($term)) {
+                    $query->whereHas('user', function ($userQuery) use ($term) {
+                        $userQuery->where('name', 'LIKE', '%' . $term . '%'); // Cari berdasarkan nama dari tabel users
+                    })
+                        ->orWhere('no_telp', 'LIKE', '%' . $term . '%'); // Tambahkan pencarian berdasarkan nomor telepon
+                }
+            })
             ->when(!$this->isSuperadmin(), function ($query) use ($cabang_id) {
                 if (!$this->isAllBranch()) {
                     $query->where('cabang_id', $cabang_id);
@@ -513,13 +515,14 @@ class TransaksiController extends Controller
             ->where('status_cad', 'Non CAD') // Filter hanya konsumen dengan status_cad = Non CAD
             ->get();
 
-        // Jika ada istilah pencarian dan tidak ditemukan konsumen Non CAD yang sesuai,
-        // tambahkan konsumen dengan status_cad = CAD juga
         if (!empty($term) && $data->isEmpty()) {
-            $cadData = Konsumen::where('status_cad', 'CAD')
+            $cadData = Konsumen::with('user') // Memuat relasi user
+                ->where('status_cad', 'CAD')
                 ->where(function ($query) use ($term) {
-                    $query->where('nama_konsumen', 'LIKE', '%' . $term . '%')
-                        ->orWhere('no_telp', 'LIKE', '%' . $term . '%'); // Menambahkan kondisi pencarian berdasarkan nomor telepon
+                    $query->whereHas('user', function ($userQuery) use ($term) {
+                        $userQuery->where('name', 'LIKE', '%' . $term . '%');
+                    })
+                        ->orWhere('no_telp', 'LIKE', '%' . $term . '%'); // Tambahkan pencarian berdasarkan nomor telepon
                 })
                 ->get();
             $data = $cadData->merge($data);
@@ -527,6 +530,7 @@ class TransaksiController extends Controller
 
         return response()->json($data);
     }
+
 
 
     // public function getKonsumenData(Request $request)
@@ -563,12 +567,15 @@ class TransaksiController extends Controller
         $term = $request->term;
         $cabang_id = Auth::user()->cabang_id; // Ambil cabang_id dari user yang sedang login
 
-        $data = Konsumen::where(function ($query) use ($term) {
-            if (!empty($term)) {
-                $query->where('nama_konsumen', 'LIKE', '%' . $term . '%')
-                    ->orWhere('no_telp', 'LIKE', '%' . $term . '%'); // Menambahkan kondisi pencarian berdasarkan nomor telepon
-            }
-        })
+        // Ambil data konsumen berdasarkan kondisi pencarian
+        $data = Konsumen::with('user') // Relasi dengan tabel users
+            ->where(function ($query) use ($term) {
+                if (!empty($term)) {
+                    $query->whereHas('user', function ($userQuery) use ($term) {
+                        $userQuery->where('name', 'LIKE', '%' . $term . '%'); // Pencarian berdasarkan nama dari tabel users
+                    })->orWhere('no_telp', 'LIKE', '%' . $term . '%'); // Pencarian berdasarkan nomor telepon
+                }
+            })
             ->when(!$this->isSuperadmin(), function ($query) use ($cabang_id) {
                 if (!$this->isAllBranch()) {
                     $query->where('cabang_id', $cabang_id);
@@ -580,17 +587,21 @@ class TransaksiController extends Controller
         // Jika ada istilah pencarian dan tidak ditemukan konsumen Non CAD yang sesuai,
         // tambahkan konsumen dengan status_cad = CAD juga
         if (!empty($term) && $data->isEmpty()) {
-            $cadData = Konsumen::where('status_cad', 'CAD')
+            $cadData = Konsumen::with('user')
+                ->where('status_cad', 'CAD')
                 ->where(function ($query) use ($term) {
-                    $query->where('nama_konsumen', 'LIKE', '%' . $term . '%')
-                        ->orWhere('no_telp', 'LIKE', '%' . $term . '%'); // Menambahkan kondisi pencarian berdasarkan nomor telepon
+                    $query->whereHas('user', function ($userQuery) use ($term) {
+                        $userQuery->where('name', 'LIKE', '%' . $term . '%'); // Pencarian berdasarkan nama dari tabel users
+                    })->orWhere('no_telp', 'LIKE', '%' . $term . '%'); // Pencarian berdasarkan nomor telepon
                 })
                 ->get();
             $data = $cadData->merge($data);
         }
 
+        // Kembalikan data dalam format JSON
         return response()->json($data);
     }
+
 
 
 
@@ -613,17 +624,21 @@ class TransaksiController extends Controller
         $term = $request->term;
         $selectedKonsumen = $request->selectedKonsumen; // Terima objek selectedKonsumen dari permintaan
 
-        // Lakukan query untuk mendapatkan data bill_to berdasarkan nama konsumen dan konsumen_penerima yang dipilih
-        $data = Konsumen::where(function ($query) use ($term, $selectedKonsumen) {
-            $query->where('nama_konsumen', 'LIKE', '%' . $term . '%')
-                ->orWhere('no_telp', 'LIKE', '%' . $term . '%'); // Menambahkan kondisi pencarian berdasarkan nomor telepon
-        })
+        // Query untuk mendapatkan data bill_to berdasarkan nama dari tabel users
+        $data = Konsumen::with('user') // Pastikan relasi dengan tabel users
+            ->where(function ($query) use ($term, $selectedKonsumen) {
+                $query->whereHas('user', function ($userQuery) use ($term) {
+                    $userQuery->where('name', 'LIKE', '%' . $term . '%'); // Pencarian berdasarkan name di tabel users
+                })
+                    ->orWhere('no_telp', 'LIKE', '%' . $term . '%'); // Pencarian berdasarkan nomor telepon
+            })
             ->where('status_cad', 'CAD')
-            ->whereIn('id', [$selectedKonsumen['konsumen'], $selectedKonsumen['konsumenPenerima']]) // Filter berdasarkan kedua konsumen yang dipilih
+            ->whereIn('id', [$selectedKonsumen['konsumen'], $selectedKonsumen['konsumenPenerima']]) // Filter berdasarkan konsumen yang dipilih
             ->get();
 
         return response()->json($data);
     }
+
 
 
 
@@ -702,7 +717,6 @@ class TransaksiController extends Controller
         // Validasi request
         $request->validate([
             'jenis_pembayaran' => 'required',
-            // 'keterangan_kasir' => 'required',
             'metode_pembayaran' => 'required_if:jenis_pembayaran,CASH',
             'jumlah_bayar' => 'required_if:jenis_pembayaran,CASH|numeric',
             'harga_kirim' => 'required|numeric',
@@ -760,22 +774,25 @@ class TransaksiController extends Controller
             $pengiriman->status_bawa = 'Belum Dibawa';
 
             // Set nilai konsumen_id dan nama_konsumen dari request ke model Transaksi
-            $konsumen = Konsumen::select('nama_konsumen')->find($request->konsumen);
-            $konsumenPenerima = Konsumen::select('nama_konsumen')->find($request->konsumen_penerima);
-            $konsumenBillTo = Konsumen::select('nama_konsumen')->find($request->bill_to);
+            $konsumen = Konsumen::with('user:id,name')->find($request->konsumen);
+            $konsumenPenerima = Konsumen::with('user:id,name')->find($request->konsumen_penerima);
+            $konsumenBillTo = Konsumen::with('user:id,name')->find($request->bill_to);
+
+
+            $pengiriman->nama_konsumen = $konsumen?->user?->name ?? null;
+            $pengiriman->nama_konsumen_penerima = $konsumenPenerima?->user?->name ?? null;
+            $pengiriman->nama_bill_to = $konsumenBillTo?->user?->name ?? null;
 
             $pengiriman->tanggal_kirim = Carbon::now()->toDateString();
             $pengiriman->tanggal_terima_otomatis = Carbon::now()->addDay()->toDateString();
             $pengiriman->konsumen_id = $request->konsumen;
-            $pengiriman->nama_konsumen = $konsumen?->nama_konsumen;
             $pengiriman->konsumen_penerima_id = $request->konsumen_penerima;
-            $pengiriman->nama_konsumen_penerima = $konsumenPenerima?->nama_konsumen;
             $pengiriman->bill_to = $request->bill_to;
-            $pengiriman->nama_bill_to = $konsumenBillTo?->nama_konsumen;
             $pengiriman->total_bayar = $request->total_bayar;
             $pengiriman->cabang_id_asal = $request->cabang_id_asal;
             $pengiriman->cabang_id_tujuan = $request->cabang_id_tujuan;
             $pengiriman->keterangan_kasir = $request->keterangan_kasir;
+            $pengiriman->status_pengiriman = 'Proses Pengiriman';
 
             // Simpan perubahan
             $pengiriman->save();
@@ -1048,6 +1065,7 @@ class TransaksiController extends Controller
             $penerimaan->status_bawa = $request->status_bawa;
             $penerimaan->jumlah_bayar = $request->jumlah_bayar;
             $penerimaan->metode_pembayaran = $request->metode_pembayaran;
+            $penerimaan->status_pengiriman = 'Sudah Sampai';
 
             // Simpan perubahan
             $penerimaan->save();
@@ -1148,9 +1166,9 @@ class TransaksiController extends Controller
                 ->leftJoin('konsumen', 'transaksi.nama_konsumen_penerima', '=', 'konsumen.nama_konsumen')
                 ->when($filterStartDate && $filterEndDate, function ($q) use ($filterStartDate, $filterEndDate, $currentServerDate) {
                     return $q->whereDate('tanggal_terima_otomatis', '>=', $filterStartDate)
-                             ->whereDate('tanggal_terima_otomatis', '<=', $filterEndDate)
-                             // Tambahkan validasi bahwa data tidak boleh muncul sebelum tanggal sekarang
-                             ->whereDate('tanggal_terima_otomatis', '<=', $currentServerDate);
+                        ->whereDate('tanggal_terima_otomatis', '<=', $filterEndDate)
+                        // Tambahkan validasi bahwa data tidak boleh muncul sebelum tanggal sekarang
+                        ->whereDate('tanggal_terima_otomatis', '<=', $currentServerDate);
                 })
                 ->when(!$this->isSuperadmin(), function ($q) {
                     return $q->where('cabang_id_tujuan', Auth::user()->cabang_id);
@@ -1231,6 +1249,7 @@ class TransaksiController extends Controller
             $pengambilan->tanggal_bawa = Carbon::now()->toDateString();
             $pengambilan->status_bawa = $request->status_bawa;
             $pengambilan->pengambil = $request->pengambil;
+            $pengambilan->status_pengiriman = 'Sudah Diambil';
 
             // Simpan gambar jika ada yang diunggah
             if ($request->hasFile('gambar_pengambil')) {

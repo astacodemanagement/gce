@@ -112,8 +112,8 @@
                                     </div>
                                 @endhasrole
                                 <div class="form-group">
-                                    <label for="nama_konsumen">Nama Konsumen</label>
-                                    <input type="text" class="form-control" id="nama_konsumen" name="nama_konsumen"
+                                    <label for="name">Nama Konsumen</label>
+                                    <input type="text" class="form-control" id="name" name="name"
                                         placeholder="Masukkan Nama Konsumen" required>
                                 </div>
                                 <div class="form-group">
@@ -160,7 +160,7 @@
                                     </script>
                                     
                                 <div class="form-group">
-                                    <label for="nama_konsumen">Nama Perusahaan</label>
+                                    <label for="name">Nama Perusahaan</label>
                                     <input type="text" class="form-control" id="nama_perusahaan" name="nama_perusahaan"
                                         placeholder="Masukkan Nama Perusahaan">
                                 </div>
@@ -173,6 +173,11 @@
                                     <label for="email">Email</label>
                                     <input type="email" class="form-control" id="email" name="email"
                                         placeholder="Masukkan Email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="text" class="form-control" id="password" name="password"
+                                        placeholder="Masukkan Password" >
                                 </div>
                                 <div class="form-group">
                                     <label for="alamat">Alamat</label>
@@ -229,9 +234,9 @@
                                     </div>
                                 @endhasrole
                                 <div class="form-group">
-                                    <label for="nama_konsumen_edit">Nama Konsumen</label>
-                                    <input type="text" class="form-control" id="nama_konsumen_edit"
-                                        name="nama_konsumen" placeholder="Masukkan Nama Konsumen" required>
+                                    <label for="name_edit">Nama Konsumen</label>
+                                    <input type="text" class="form-control" id="name_edit"
+                                        name="name" placeholder="Masukkan Nama Konsumen" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="status_cad_edit">Status CAD</label>
@@ -290,6 +295,11 @@
                                     <label for="email_edit">Email</label>
                                     <input type="email" class="form-control" id="email_edit" name="email"
                                         placeholder="Masukkan Email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password_edit">Password</label>
+                                    <input type="text" class="form-control" id="password_edit" name="password"
+                                        placeholder="Masukkan Password" >
                                 </div>
                                 <div class="form-group">
                                     <label for="alamat_edit">Alamat</label>
@@ -357,7 +367,7 @@
         document.getElementById('form-konsumen').addEventListener('submit', function(e) {
             e.preventDefault(); // Mencegah form melakukan submit default
             const tombolSimpan = $('#btn-simpan-konsumen')
-            var namaKonsumen = document.getElementById('nama_konsumen').value.trim();
+            var namaKonsumen = document.getElementById('name').value.trim();
             var statusCAD = document.getElementById('status_cad').value.trim();
             var noKontrak = document.getElementById('no_kontrak').value.trim();
             var jatuhTempo = document.getElementById('jatuh_tempo').value.trim();
@@ -410,9 +420,9 @@
                                 if (i === 'no_telp' && item ===
                                     'Nomor telepon sudah terdaftar.') {
                                     var additionalData = xhr.responseJSON.additional_data;
-                                    if (additionalData && additionalData.nama_konsumen) {
+                                    if (additionalData && additionalData.name) {
                                         errorMessage += 'Nomor telepon sudah terdaftar untuk ' +
-                                            additionalData.nama_konsumen + '. ';
+                                            additionalData.name + '. ';
                                     } else {
                                         errorMessage += item + ' ';
                                     }
@@ -487,12 +497,12 @@
                     success: function(data) {
                         // Mengisi data pada form modal
                         $('#id').val(data.id); // Menambahkan nilai id ke input tersembunyi
-                        $('#nama_konsumen_edit').val(data.nama_konsumen);
+                        $('#name_edit').val(data.user?.name || ''); // Nama dari tabel users
+                        $('#email_edit').val(data.user?.email || ''); // Email dari tabel users
                         $('#status_cad_edit').val(data.status_cad);
                         $('#no_kontrak_edit').val(data.no_kontrak);
                         $('#jatuh_tempo_edit').val(data.jatuh_tempo);
                         $('#no_telp_edit').val(data.no_telp);
-                        $('#email_edit').val(data.email);
                         $('#alamat_edit').val(data.alamat);
                         $('#nama_perusahaan_edit').val(data.nama_perusahaan);
                         $('#modal-konsumen-edit').modal('show');
