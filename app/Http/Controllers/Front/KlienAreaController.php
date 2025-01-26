@@ -70,9 +70,6 @@ class KlienAreaController extends Controller
             ->where('status_bayar', 'Sudah Lunas')
             ->get();
 
-
-
-
         // Mengambil data konsumen yang terkait dengan pengguna
         $konsumen = Konsumen::where('user_id', $user->id)->first();
         // Mengambil data transaksi berdasarkan konsumen_id dan status_pengiriman
@@ -91,8 +88,6 @@ class KlienAreaController extends Controller
                 ->where('status_bayar', $status_bayar)
                 ->get();
         }
-
-
 
         return view('front.area.index', compact(
             'title',

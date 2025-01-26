@@ -8,74 +8,6 @@
 
 @push('css')
 
-<!-- <style>
-    /* Efek hover dengan hanya shadow */
-    .btn-light {
-        transition: box-shadow 0.3s ease;
-        /* Transisi halus untuk shadow */
-    }
-
-    .btn-light:hover {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        /* Tambahkan shadow saat hover */
-    }
-
-
-    /* Background color for active tab */
-    .nav-tabs .nav-link.active {
-        background-color: #007bff;
-        /* Ganti dengan warna yang diinginkan */
-        color: #fff;
-        /* Warna teks untuk tab aktif */
-        border: 1px solid #007bff;
-        /* Warna border */
-        border-radius: 5px;
-        /* Membuat sudut melengkung */
-    }
-
-    /* Background color for inactive tabs */
-    .nav-tabs .nav-link {
-        background-color: #f8f9fa;
-        /* Ganti dengan warna yang diinginkan */
-        color: #fff;
-        /* Warna teks untuk tab tidak aktif */
-        border: 1px solid #ddd;
-        /* Warna border */
-        border-radius: 5px;
-        /* Membuat sudut melengkung */
-        margin-right: 5px;
-        /* Memberi jarak antar tab */
-
-    }
-
-    /* Hover effect for inactive tabs */
-    .nav-tabs .nav-link:hover {
-        background-color: #e9ecef;
-        /* Warna saat hover */
-        color: #000;
-        /* Warna teks saat hover */
-        cursor: pointer;
-        /* Ubah kursor menjadi pointer */
-    }
-
-
-
-
-    /* 
-    .list-group-item {
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .list-group-item:hover {
-        background-color: #f0f0f0;
-    }
-
-    .tracking-timeline {
-        border-left: 3px solid #007bff;
-        padding-left: 20px;
-    } */
-</style> -->
 
 <!-- CSS DataTables CDN -->
 
@@ -532,11 +464,9 @@
                                                                         <td>{{ $p->jenis_pembayaran}}</td>
                                                                         <td>
                                                                             <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
-                                                                                <i class="fas fa-edit"></i> Edit
+                                                                                <i class="fas fa-eye"></i> Detail
                                                                             </a>
-                                                                            <button class="btn btn-sm btn-danger btn-hapus" data-id="{{ $p->id }}" style="color: white">
-                                                                                <i class="fas fa-trash-alt"></i> Delete
-                                                                            </button>
+
                                                                         </td>
                                                                     </tr>
                                                                     @php $i++; @endphp
@@ -635,11 +565,9 @@
                                                                         <td>{{ $p->jenis_pembayaran}}</td>
                                                                         <td>
                                                                             <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
-                                                                                <i class="fas fa-edit"></i> Edit
+                                                                                <i class="fas fa-eye"></i> Detail
                                                                             </a>
-                                                                            <button class="btn btn-sm btn-danger btn-hapus" data-id="{{ $p->id }}" style="color: white">
-                                                                                <i class="fas fa-trash-alt"></i> Delete
-                                                                            </button>
+                                                                            
                                                                         </td>
                                                                     </tr>
                                                                     @php $i++; @endphp
@@ -736,11 +664,9 @@
                                                                         <td>{{ $p->jenis_pembayaran}}</td>
                                                                         <td>
                                                                             <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
-                                                                                <i class="fas fa-edit"></i> Edit
+                                                                                <i class="fas fa-eye"></i> Detail
                                                                             </a>
-                                                                            <button class="btn btn-sm btn-danger btn-hapus" data-id="{{ $p->id }}" style="color: white">
-                                                                                <i class="fas fa-trash-alt"></i> Delete
-                                                                            </button>
+                                                                            
                                                                         </td>
                                                                     </tr>
                                                                     @php $i++; @endphp
@@ -838,11 +764,9 @@
                                                                         <td>{{ $p->jenis_pembayaran}}</td>
                                                                         <td>
                                                                             <a style="color: rgb(242, 236, 236)" href="#" class="btn btn-sm btn-primary btn-edit" data-toggle="modal" data-target="#modal-edit" data-id="{{ $p->id }}" style="color: black">
-                                                                                <i class="fas fa-edit"></i> Edit
+                                                                                <i class="fas fa-eye"></i> Detail
                                                                             </a>
-                                                                            <button class="btn btn-sm btn-danger btn-hapus" data-id="{{ $p->id }}" style="color: white">
-                                                                                <i class="fas fa-trash-alt"></i> Delete
-                                                                            </button>
+                                                                            
                                                                         </td>
                                                                     </tr>
                                                                     @php $i++; @endphp

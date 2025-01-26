@@ -37,18 +37,8 @@ use App\Http\Controllers\Front\InformasiController;
 use App\Http\Controllers\Front\PendaftaranController;
 use App\Http\Controllers\Front\KlienAreaController;
 use App\Http\Controllers\Front\LoginController;
-use App\Models\HalamanStatis;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+ 
+ 
 
 // Route::get('/', function () {
 //     return view('welcome');
